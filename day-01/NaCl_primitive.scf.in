@@ -1,0 +1,37 @@
+&CONTROL
+   calculation      = 'scf'
+   tstress          = .true.
+   tprnfor          = .true.
+   outdir           = './tmp/'
+   prefix           = 'NaCl'
+   pseudo_dir       = 'pseudopotentials'
+/
+&SYSTEM
+   ibrav            = 2
+   ecutwfc          = 20.0
+   ntyp             = 2
+   nat              = 2
+   celldm(1)        = 10.6
+/
+&ELECTRONS
+   conv_thr         = 1e-08
+   mixing_mode      = 'plain'
+   mixing_beta      = 0.7
+   diagonalization  = 'david'
+/
+&IONS
+/
+&CELL
+/
+
+ATOMIC_SPECIES
+Na 22.98976928 Na_pseudo_dojo_v0.5.upf
+Cl 35.45 Cl_pseudo_dojo_v0.5.upf
+
+K_POINTS automatic
+4 4 4  0 0 0
+
+ATOMIC_POSITIONS crystal
+Na 0.0000000000 0.0000000000 0.0000000000 
+Cl 0.5000000000 0.5000000000 0.5000000000 
+
