@@ -12,3 +12,15 @@ Each `day-XX/` directory contains the materials for the corresponding day's hand
 
 - **Week 1** — electronic-structure theory and spectroscopy: DFT and beyond, lattice dynamics, many-body perturbation theory, topology and Wannier functions, advanced functionals.
 - **Week 2** — statistical mechanics and machine learning: molecular dynamics, enhanced sampling, ML for materials and interatomic potentials.
+
+## Sponsors
+
+<p align="center">
+  <img src="logos/ictp.svg" alt="ICTP" width="7%">
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="logos/marvel.png" alt="MARVEL" width="18%">
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="logos/snsf.png" alt="SNSF" width="33%">
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="logos/cineca.png" alt="CINECA" width="27%">
+</p>
