@@ -193,11 +193,11 @@ Calculate the bulk modulus *B* of NaCl using the third-order Birch–Murnaghan i
 >
 > A more complicated approach than the second-order one is to use an *equation of state* — that is, a function that describes the relationship of state variables. There are several competing proposals for the precise shape of this function. Here we use the *third-order Birch–Murnaghan isothermal equation of state*:
 >
-> $$ P(V) = \frac{3 B_0}{2} \left[ \left(\frac{V_0}{V}\right)^{7/3} - \left(\frac{V_0}{V}\right)^{5/3} \right] \left\{ 1 + \frac{3}{4} (B_0' - 4) \left[ \left(\frac{V_0}{V}\right)^{2/3} - 1 \right] \right\}, $$
+> $$ P(V) = \frac{3 B_0}{2} \left[ \left(\frac{V_0}{V}\right)^{7/3} - \left(\frac{V_0}{V}\right)^{5/3} \right] \left\lbrace 1 + \frac{3}{4} (B_0' - 4) \left[ \left(\frac{V_0}{V}\right)^{2/3} - 1 \right] \right\rbrace, $$
 >
 > where *P* is the pressure, *V*₀ is the equilibrium volume, *V* is the deformed volume, *B*₀ is the bulk modulus, and *B*₀′ is the derivative of the bulk modulus with respect to pressure. Integration of this pressure expression with volume gives the energy-versus-volume relationship
 >
-> $$ E(V) = E_0 + \frac{9 V_0 B_0}{16} \left\{ \left[ \left(\frac{V_0}{V}\right)^{2/3} - 1 \right]^3 B_0' + \left[ \left(\frac{V_0}{V}\right)^{2/3} - 1 \right]^2 \left[ 6 - 4 \left(\frac{V_0}{V}\right)^{2/3} \right] \right\}. $$
+> $$ E(V) = E_0 + \frac{9 V_0 B_0}{16} \left\lbrace \left[ \left(\frac{V_0}{V}\right)^{2/3} - 1 \right]^3 B_0' + \left[ \left(\frac{V_0}{V}\right)^{2/3} - 1 \right]^2 \left[ 6 - 4 \left(\frac{V_0}{V}\right)^{2/3} \right] \right\rbrace. $$
 >
 > To perform this fitting you can either implement it yourself (*e.g.* using `python`) or use the interactive `ev.x` program provided with `Quantum ESPRESSO`. This program works interactively: it expects that you specify units (`Ang` or `ANG` or `ang` indicates Ångströms, while any other input will default to atomic units), the type of Bravais lattice that you used, the type of equation of state that you want to use for the fit (in our case, `birch1`), and an input file. In the input file for `ev.x` you have to provide two columns for the case of an FCC lattice: the first one contains the lattice parameter and the second one the total energy obtained.
 
@@ -219,7 +219,12 @@ The stiffness tensor has 81 components, but symmetries of $\sigma$ and $\epsilon
 
 Strain is applied to the lattice vectors by
 
-$$ \begin{pmatrix} \mathbf{a}'_1 \\ \mathbf{a}'_2 \\ \mathbf{a}'_3 \end{pmatrix} = \begin{pmatrix} \mathbf{a}_1 \\ \mathbf{a}_2 \\ \mathbf{a}_3 \end{pmatrix} (I + \varepsilon), \qquad \varepsilon = \begin{pmatrix} e_1 & e_6/2 & e_5/2 \\ e_6/2 & e_2 & e_4/2 \\ e_5/2 & e_4/2 & e_3 \end{pmatrix}. $$
+$$
+\begin{pmatrix} \mathbf{a}'_1 \\ \mathbf{a}'_2 \\ \mathbf{a}'_3 \end{pmatrix}
+= \begin{pmatrix} \mathbf{a}_1 \\ \mathbf{a}_2 \\ \mathbf{a}_3 \end{pmatrix} (I + \varepsilon),
+\qquad
+\varepsilon = \begin{pmatrix} e_1 & e_6/2 & e_5/2 \\ e_6/2 & e_2 & e_4/2 \\ e_5/2 & e_4/2 & e_3 \end{pmatrix}.
+$$
 
 To second order, the total energy of the distorted lattice is
 
@@ -239,7 +244,9 @@ For this exercise, we will use the conventional unit cell containing 8 atoms. In
 
 Compute the elastic constants *C*₁₁ and *C*₁₂ using the volume-conserving **orthorhombic strain**
 
-$$ \varepsilon = \begin{pmatrix} x & 0 & 0 \\ 0 & -x & 0 \\ 0 & 0 & \dfrac{x^2}{1 - x^2} \end{pmatrix}. $$
+$$
+\varepsilon = \begin{pmatrix} x & 0 & 0 \\ 0 & -x & 0 \\ 0 & 0 & \dfrac{x^2}{1 - x^2} \end{pmatrix}.
+$$
 
 For different values of $x$, compute the strained lattice vectors $\mathbf{a}'_i$, run a calculation, and obtain the energy profile $E(x)$. By symmetry,
 
@@ -275,7 +282,9 @@ celldm(3) = |a'3| / |a'1|
 
 Compute *C*₄₄ using the volume-conserving **monoclinic shear strain**
 
-$$ \varepsilon = \begin{pmatrix} 0 & x/2 & 0 \\ x/2 & 0 & 0 \\ 0 & 0 & \dfrac{x^2}{4 - x^2} \end{pmatrix}, $$
+$$
+\varepsilon = \begin{pmatrix} 0 & x/2 & 0 \\ x/2 & 0 & 0 \\ 0 & 0 & \dfrac{x^2}{4 - x^2} \end{pmatrix},
+$$
 
 which gives
 
