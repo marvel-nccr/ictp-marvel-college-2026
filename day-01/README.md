@@ -220,10 +220,24 @@ The stiffness tensor has 81 components, but symmetries of $\sigma$ and $\epsilon
 Strain is applied to the lattice vectors by
 
 $$
-\begin{pmatrix} \mathbf{a}'_1 \\ \mathbf{a}'_2 \\ \mathbf{a}'_3 \end{pmatrix}
-= \begin{pmatrix} \mathbf{a}_1 \\ \mathbf{a}_2 \\ \mathbf{a}_3 \end{pmatrix} (I + \varepsilon),
+\begin{pmatrix}
+\mathbf{a}'_1 \\
+\mathbf{a}'_2 \\
+\mathbf{a}'_3
+\end{pmatrix}
+=
+\begin{pmatrix}
+\mathbf{a}_1 \\
+\mathbf{a}_2 \\
+\mathbf{a}_3
+\end{pmatrix} (I + \varepsilon),
 \qquad
-\varepsilon = \begin{pmatrix} e_1 & e_6/2 & e_5/2 \\ e_6/2 & e_2 & e_4/2 \\ e_5/2 & e_4/2 & e_3 \end{pmatrix}.
+\varepsilon =
+\begin{pmatrix}
+e_1 & e_6/2 & e_5/2 \\
+e_6/2 & e_2 & e_4/2 \\
+e_5/2 & e_4/2 & e_3
+\end{pmatrix}.
 $$
 
 To second order, the total energy of the distorted lattice is
@@ -245,7 +259,12 @@ For this exercise, we will use the conventional unit cell containing 8 atoms. In
 Compute the elastic constants *C*₁₁ and *C*₁₂ using the volume-conserving **orthorhombic strain**
 
 $$
-\varepsilon = \begin{pmatrix} x & 0 & 0 \\ 0 & -x & 0 \\ 0 & 0 & \dfrac{x^2}{1 - x^2} \end{pmatrix}.
+\varepsilon =
+\begin{pmatrix}
+x & 0 & 0 \\
+0 & -x & 0 \\
+0 & 0 & \dfrac{x^2}{1 - x^2}
+\end{pmatrix}.
 $$
 
 For different values of $x$, compute the strained lattice vectors $\mathbf{a}'_i$, run a calculation, and obtain the energy profile $E(x)$. By symmetry,
@@ -283,7 +302,12 @@ celldm(3) = |a'3| / |a'1|
 Compute *C*₄₄ using the volume-conserving **monoclinic shear strain**
 
 $$
-\varepsilon = \begin{pmatrix} 0 & x/2 & 0 \\ x/2 & 0 & 0 \\ 0 & 0 & \dfrac{x^2}{4 - x^2} \end{pmatrix},
+\varepsilon =
+\begin{pmatrix}
+0 & x/2 & 0 \\
+x/2 & 0 & 0 \\
+0 & 0 & \dfrac{x^2}{4 - x^2}
+\end{pmatrix},
 $$
 
 which gives
