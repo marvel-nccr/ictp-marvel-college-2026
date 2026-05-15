@@ -1,6 +1,6 @@
 # Introduction to DFT: Hands-on session
 
-**Tutors**: List here
+**Tutors**: Edward Linscott & Pietro Delugas
 
 This session continues from the [preliminary exercises](../before/preliminary-exercises/), where you ran your first `Quantum ESPRESSO` calculation on bulk NaCl. Here you will run convergence tests for the cutoff energy and _**k**_-point sampling, and then use the converged parameters to compute the equilibrium lattice parameter, bulk modulus, and elastic constants.
 
