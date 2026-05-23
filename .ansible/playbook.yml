@@ -1,0 +1,11 @@
+---
+- name: Apply post-distribution school updates
+  hosts: localhost
+  connection: local
+  become: true
+  gather_facts: false
+  tasks:
+
+  - name: Greet
+    ansible.builtin.debug:
+      msg: "Hello from the post-distribution playbook!"
