@@ -290,12 +290,12 @@ km.visualize()
 
 ### Task 2: Band structure
 
-We use the same $k$-path as in Haldane, but because the model is spinful, there are now four bands instead of two.
+We use the same $k$-path as in Haldane, but because the model is spinful, there are now four bands instead of two. Specifying an orbital in `proj_orb_idx` implicitly sums over all spin orientations (up and down).
 
 ```python
 k_nodes = [[0, 0], [2/3, 1/3], [1/2, 1/2], [1/3, 2/3], [0, 0]]
 k_node_labels = [r"$\Gamma$", r"$K$", r"$M$", r"$K'$", r"$\Gamma$"]
-proj_orb_idx = [0]  # project onto the first orbital (A sublattice, spin up)
+proj_orb_idx = [0]  # project onto the first orbital (A sublattice)
 
 km.plot_bands(
     nk=500,
