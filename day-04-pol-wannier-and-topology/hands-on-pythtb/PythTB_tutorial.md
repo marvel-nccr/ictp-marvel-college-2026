@@ -114,31 +114,36 @@ This is what we will be doing for the Haldane and Kane-Mele models in the follow
 > 10 minutes
 
 In a 2D insulator with broken time-reversal symmetry the topological invariant is the **Chern number**, the integral of the Berry curvature over the BZ,
+
 $$
-C = \frac{1}{2\pi} \int_{\text{BZ}} F_{xy}(k_x, k_y) \, dk_x\, dk_y.
+C = \frac{1}{2\pi} \int_{\mathrm{BZ}} F_{xy}(k_x, k_y)\, dk_x\, dk_y .
 $$
-A nonzero Chern number forbids fully localized Wannier functions — the **topological obstruction** to a localized Wannier representation. We can still build *hybrid Wannier functions* (localized along $x$, Bloch-extended along $y$), and the position of their centers is what we will use to detect topology.
+
+A nonzero Chern number forbids fully localized Wannier functions — the **topological obstruction** to a localized Wannier representation. We can still build *hybrid Wannier functions* (localized along $x$, Bloch-extended along $y$), and the positions of their centers will be what we use to detect topology.
 
 The diagnostic is built from a **Berry phase**: the integral of the Berry connection $A_\mu(k) = i\langle u(k) | \partial_{k_\mu} u(k) \rangle$ around a closed loop in $k$-space,
+
 $$
 \gamma = \oint A_\mu(k)\, dk_\mu.
 $$
+
 For a one-band, one-dimensional insulator, $\gamma / 2\pi$ is exactly the electronic Wannier center in reduced coordinates — this is the modern theory of polarization. In our 2D case we close the loop along $k_x$ at fixed $k_y$ and divide by $2\pi$ to get the **hybrid Wannier charge center** (HWCC) at that $k_y$,
+
 $$
 \bar{x}(k_y) = \frac{1}{2\pi} \oint A_x(k_x, k_y)\, dk_x.
 $$
+
 Tracing this for every $k_y$ gives the **HWCC flow**. Its net winding as $k_y$ traverses the BZ equals the Chern number. This is the real-space fingerprint of the topological obstruction.
 
-**Goal**: diagnose the topology of the Haldane model from band inversion, the Chern number, and the HWCC flow.
+**Goal**: Diagnose the topology of the Haldane model from band inversion, the Chern number, and the HWCC flow.
 
 ### Task 1: Define the Haldane model
 
 The Haldane model is a two-band honeycomb model with a staggered sublattice potential $\Delta$, a real nearest-neighbor hopping $t_1$, and a complex next-nearest-neighbor hopping $t_2 e^{i\phi}$ that breaks time-reversal symmetry:
+
+$$H = \Delta \sum_i (-)^i c_i^\dagger c_i + t_1 \sum_{\langle i,j \rangle} (c_i^\dagger c_j + \text{h.c.}) + t_2 \sum_{\langle\langle i,j \rangle\rangle} (e^{i \phi} c_i^\dagger c_j + \text{h.c.}).
 $$
-H = \Delta \sum_i (-)^i c_i^\dagger c_i
-  + t_1 \sum_{\langle i,j \rangle} (c_i^\dagger c_j + \text{h.c.})
-  + t_2 \sum_{\langle\langle i,j \rangle\rangle} (e^{i \phi} c_i^\dagger c_j + \text{h.c.}).
-$$
+
 The `haldane` helper builds the model for you:
 
 ```python
@@ -156,11 +161,13 @@ hal.visualize()
 
 ### Task 2: Band structure and band inversion
 
-`plot_bands` accepts a list of high-symmetry $k$-nodes in reduced coordinates and an optional `proj_orb_idx` that colors each band by its projection onto a chosen orbital,
+`plot_bands` accepts a list of high-symmetry $k$-nodes in reduced coordinates and an optional `proj_orb_idx` list of orbital indices. `proj_orb_idx` then colors each band by its projection onto the set of chosen orbitals,
+
+$$ 
+P_n(k) = \sum_{i \in \mathrm{proj}} \left| \langle \psi_n(k) \mid \phi_i \rangle \right|^2.
 $$
-P_n(k) = \sum_{i \in \text{proj\_orb\_idx}} |\langle \psi_n(k) | \phi_i \rangle|^2.
-$$
-The sublattice that dominates the occupied band near the gap is what tells you whether the bands have inverted.
+
+The sublattice that dominates the occupied band near the gap determines whether the bands are inverted.
 
 ```python
 k_nodes = [[0, 0], [2/3, 1/3], [1/2, 1/2], [1/3, 2/3], [0, 0]]
@@ -223,6 +230,7 @@ print(C_h)
 ```
 
 The magnitude of the Chern number should match the net winding of the HWCC flow,
+
 $$
 |\Delta\bar{x}| = |C|.
 $$
@@ -234,7 +242,7 @@ Now reduce $|t_2|$ until the system becomes trivial. At $t_2 = 0$ you recover bo
 | $t_2$ | HWCC endpoint change $\Delta\bar{x}$ | Occupied Chern number | Band inversion at $K$ or $K'$? | Topological or trivial? |
 | --- | --- | --- | --- | --- |
 | $-0.3$ <br><br> |  |  |  |  |
-| $\phantom{-0.0}$ <br><br> |  |  |  |  |
+|  <br><br> |  |  |  |  |
 
 ---
 
@@ -243,26 +251,25 @@ Now reduce $|t_2|$ until the system becomes trivial. At $t_2 = 0$ you recover bo
 > 10 minutes
 
 With time-reversal symmetry the Berry curvature is odd under TR, so the Chern number vanishes — HWCC winding of a single band cannot be the invariant. The right object is the **Wilson loop**, the path-ordered exponential of the non-abelian Berry connection along $k_x$,
+
 $$
 U(k_y) = \mathcal{P} \exp\left( i \oint_0^{2\pi} A_x(k_x, k_y)\, dk_x \right),
 $$
+
 a unitary on the occupied subspace. Its eigenphases $\theta_n(k_y)$ are the centers of the two hybrid Wannier branches — the multi-band generalization of the single HWCC from Haldane, obtained from `WFArray.berry_phase(..., berry_evals=True)`.
 
 > **Note**:
 > The non-Abelian Berry connection is a matrix-valued generalization of the Berry connection that arises when there are multiple occupied bands. It is defined as $A_\mu^{mn}(k) = i\langle u_m(k) | \partial_{k_\mu} u_n(k) \rangle$, where $m$ and $n$ run over the occupied bands. The Wilson loop is then the path-ordered exponential of this matrix-valued connection, which captures the parallel transport of the entire occupied subspace along a closed loop in $k$-space.
 
-Time-reversal symmetry forces the two branches into a Kramers pair at $k_y = 0$ and $k_y = 1/2$ (the TRIMs) but leaves them free to wander between. The $\mathbb{Z}_2$ invariant is **partner switching**: in the topological phase the branches swap partners between the two TRIMs (any horizontal reference line over $k_y \in [0, 1/2]$ is crossed an odd number of times); in the trivial phase they don't (even number of crossings).
+Time-reversal symmetry forces the two branches into a Kramers pair at $k_y = 0$ and $k_y = 1/2$ (the TRIMs) but leaves them free to wander between. The $\mathbb{Z}_2$ invariant is **partner switching**: in the topological phase, the branches swap partners between the two TRIMs (any horizontal reference line over $k_y \in [0, 1/2]$ is crossed an odd number of times); in the trivial phase they don't (even number of crossings).
 
 **Goal**: diagnose the $\mathbb{Z}_2$ topology of Kane-Mele from band inversion and the Wilson-loop eigenphase flow.
 
 ### Task 1: Define the Kane-Mele model
 
 The Kane-Mele model is effectively two copies of Haldane, one for each spin, with opposite signs of the complex NNN hopping so that time-reversal symmetry is preserved overall. It also includes a Rashba term that breaks $S_z$ conservation:
-$$
-H = \Delta \sum_{i} c_i^\dagger c_i
-  + t \sum_{\langle i,j \rangle} (c_i^\dagger c_j + \text{h.c.})
-  + \lambda_{SO} \sum_{\langle\langle i,j \rangle\rangle} (c_i^\dagger \sigma_z c_j + \text{h.c.})
-  + \lambda_{R} \sum_{\langle i,j \rangle} (c_i^\dagger (\boldsymbol{\sigma} \times \hat{\mathbf{d}}_{ij}) c_j + \text{h.c.}).
+
+$$H = \Delta \sum_{i} c_i^\dagger c_i + t \sum_{\langle i,j \rangle} (c_i^\dagger c_j + \text{h.c.}) + \lambda_{SO} \sum_{\langle\langle i,j \rangle\rangle} (c_i^\dagger \sigma_z c_j + \text{h.c.}) + \lambda_{R} \sum_{\langle i,j \rangle} (c_i^\dagger (\boldsymbol{\sigma} \times \hat{\mathbf{d}}_{ij}) c_j + \text{h.c.}).
 $$
 
 ```python
@@ -283,18 +290,18 @@ km.visualize()
 
 ### Task 2: Band structure
 
-We use the same $k$-path as in Haldane, but because the model is spinful there are now four bands instead of two.
+We use the same $k$-path as in Haldane, but because the model is spinful, there are now four bands instead of two.
 
 ```python
 k_nodes = [[0, 0], [2/3, 1/3], [1/2, 1/2], [1/3, 2/3], [0, 0]]
 k_node_labels = [r"$\Gamma$", r"$K$", r"$M$", r"$K'$", r"$\Gamma$"]
-orbital_idx = [0]  # project onto the first orbital (A sublattice, spin up)
+proj_orb_idx = [0]  # project onto the first orbital (A sublattice, spin up)
 
 km.plot_bands(
     nk=500,
     k_nodes=k_nodes,
     k_node_labels=k_node_labels,
-    proj_orb_idx=[0],
+    proj_orb_idx=proj_orb_idx,
 )
 ```
 
