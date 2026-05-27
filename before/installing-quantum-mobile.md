@@ -14,12 +14,12 @@ Get Quantum Mobile running on your computer in three simple steps:
  2. Install Virtual Box 7.2.6 or later (see <https://www.virtualbox.org>)
  3. Import the ``.ova`` file into Virtualbox: ``File`` ➔ ``Import Appliance``
 
-## Troubleshooting
-Solutions to common problems can be found [here](https://quantum-mobile.readthedocs.io/en/latest/users/troubleshoot.html). If that page does not answer your questions, feel free to ask questions in ``#quantum-mobile`` on the ICTP-MARVEL slack
-
 ## Tips
 By default, Quantum Mobile uses a US keyboard layout. To change it...
 - open the ubuntu settings within the VM (click on the ubuntu logo in the lower left corner, search for ``Settings``, and then click on it to launch)
 - go to ``Keyboard`` ➔ ``Input sources`` ➔ ``Add Input Source``
 - click on the ``⋮`` and add the desired language
 - Once added there you should be able to select the desired keyboard profile in a drop-down menu on the upper right corner of the screen.
+
+## Troubleshooting and FAQs
+Solutions to common problems can be found in these [Troubleshooting](https://quantum-mobile.readthedocs.io/en/latest/users/troubleshoot.html) and [FAQ](https://quantum-mobile.readthedocs.io/en/latest/users/faq.html) pages. If those pages do not answer your questions, feel free to ask questions in ``#quantum-mobile`` on the ICTP-MARVEL slack
