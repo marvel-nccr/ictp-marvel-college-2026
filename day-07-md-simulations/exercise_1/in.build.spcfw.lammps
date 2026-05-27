@@ -1,0 +1,17 @@
+units real
+atom_style full
+boundary p p p
+special_bonds lj/coul 0.0 0.0 0.0
+
+# Cubic box: 216 SPC/Fw water molecules at experimental density (~1 g/cm3)
+region box block 0.0 18.552 0.0 18.552 0.0 18.552 units box
+create_box 2 box bond/types 1 angle/types 1 extra/bond/per/atom 2 extra/angle/per/atom 1 extra/special/per/atom 2
+
+mass 1 15.9994
+mass 2 1.008
+
+molecule water inputs/common/spcfw_water.mol
+lattice sc 3.092
+create_atoms 0 box mol water 24680
+
+write_data initial.spcfw.data nocoeff

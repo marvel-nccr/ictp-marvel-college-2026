@@ -1,0 +1,55 @@
+# ============================================================
+# Exercise 1 — TIP3P NVT Equilibration (rigid model via SHAKE)
+# MARVEL-ICTP School 2026
+#
+# Run from a simulations/tip3p_tdamp_{N}/ or
+# simulations/tip3p_conv_long/ directory.
+# ============================================================
+
+units real
+atom_style full
+special_bonds lj/coul 0.0 0.0 0.0
+
+# --- Parameters ---
+variable tdamp   index 100.0
+variable t_target equal 298.15  # target temperature [K]
+variable seed    index 24680
+variable nsteps  index 20000
+variable dump_every equal 50
+
+read_data ../../initial.tip3p.data
+
+pair_style lj/cut/coul/long 9.0
+bond_style harmonic
+angle_style harmonic
+include ../../inputs/common/tip3p_ewald_params.lmp
+
+timestep 0.5
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+kspace_style ewald 1.0e-6
+
+thermo_style custom step temp press density etotal pe ke ebond eangle evdwl ecoul elong
+thermo 200
+
+min_style cg
+minimize 1.0e-4 1.0e-6 1000 10000
+
+velocity all create ${t_target} ${seed} mom yes rot yes dist gaussian
+velocity all zero linear
+reset_timestep 0
+
+# Nose-Hoover NVT: Q = Nf * kB * T * tdamp^2
+fix thermostat all nvt temp ${t_target} ${t_target} ${tdamp}
+
+# SHAKE: enforces rigid O-H bonds and H-O-H angle throughout the dynamics.
+# Bond type 1 = O-H, angle type 1 = H-O-H (see tip3p_ewald_params.lmp)
+fix constraints all shake 1.0e-6 200 0 b 1 a 1
+
+dump traj all custom ${dump_every} traj.lammpstrj id mol type x y z vx vy vz
+dump_modify traj sort id
+
+run ${nsteps}
+
+write_restart final.restart
+write_data    final.data

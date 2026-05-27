@@ -1,0 +1,28 @@
+# TIP3P force-field parameters — rigid model via SHAKE constraints.
+# SHAKE uses r0 and theta0 as constraint targets; spring constants are not exercised.
+# Ref: Jorgensen et al., J. Chem. Phys. 79, 926 (1983).
+# Units: real  |  atom types: 1=O, 2=H
+
+# Partial charges [|e|] — molecule is neutral: -0.834 + 2*0.417 = 0
+set type 1 charge -0.834   # O
+set type 2 charge  0.417   # H
+
+# LJ + long-range electrostatics (Ewald), 9 Å real-space cutoff
+pair_style lj/cut/coul/long 9.0
+kspace_style ewald 1.0e-6
+pair_modify tail yes        # analytic LJ tail correction
+
+# LJ: pair_coeff I J epsilon[kcal/mol] sigma[Å]
+# LJ only on oxygen; hydrogen sites carry charge only
+pair_coeff 1 1 0.1020 3.188   # O-O
+pair_coeff 1 2 0.0    1.0     # O-H  (no LJ)
+pair_coeff 2 2 0.0    1.0     # H-H  (no LJ)
+
+# Bonds and angles — define topology and SHAKE target geometry
+# bond_coeff:  k[kcal/mol/Å²]  r0[Å]
+bond_style harmonic
+bond_coeff 1 450.0 0.9572      # O-H
+
+# angle_coeff: k[kcal/mol/rad²]  theta0[deg]
+angle_style harmonic
+angle_coeff 1 55.0 104.52      # H-O-H

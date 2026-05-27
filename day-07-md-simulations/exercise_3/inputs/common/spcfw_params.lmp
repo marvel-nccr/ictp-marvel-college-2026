@@ -1,0 +1,26 @@
+# SPC/Fw force-field parameters — flexible water model.
+# Bonds and angles are integrated via the equations of motion (no SHAKE).
+# Charges are set in the molecule file (spcfw_water.mol): O=-0.82, H=+0.41 |e|.
+# Ref: Wu, Tepper, Voth, J. Chem. Phys. 124, 024503 (2006).
+# Units: real  |  atom types: 1=O, 2=H
+
+# LJ + long-range electrostatics (Ewald), 9 Å real-space cutoff
+pair_style lj/cut/coul/long 9.0
+kspace_style ewald 1.0e-6
+pair_modify tail yes        # analytic LJ tail correction
+
+# LJ: pair_coeff I J epsilon[kcal/mol] sigma[Å]
+# LJ only on oxygen; hydrogen sites carry charge only
+pair_coeff 1 1 0.1554253 3.165492   # O-O
+pair_coeff 1 2 0.0       1.0        # O-H  (no LJ)
+pair_coeff 2 2 0.0       1.0        # H-H  (no LJ)
+
+# Bonds — harmonic: U = k*(r-r0)^2
+# bond_coeff: k[kcal/mol/Å²]  r0[Å]
+bond_style harmonic
+bond_coeff 1 529.581 1.012      # O-H
+
+# Angles — harmonic: U = k*(theta-theta0)^2
+# angle_coeff: k[kcal/mol/rad²]  theta0[deg]
+angle_style harmonic
+angle_coeff 1 37.95 113.24      # H-O-H

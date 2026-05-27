@@ -1,0 +1,51 @@
+# ============================================================
+# Exercise 1 — SPC/Fw NVT Equilibration (flexible model)
+# MARVEL-ICTP School 2026
+#
+# Run from a simulations/spcfw_tdamp_{N}/ or
+# simulations/spcfw_conv_long/ directory.
+# ============================================================
+
+units real
+atom_style full
+special_bonds lj/coul 0.0 0.0 0.0
+
+# --- Parameters ---
+variable tdamp   index 100.0
+variable t_target equal 298.15  # target temperature [K]
+variable seed    index 24680
+variable nsteps  index 20000
+variable dump_every equal 50
+
+read_data ../../initial.spcfw.data
+
+pair_style lj/cut/coul/long 9.0
+bond_style harmonic
+angle_style harmonic
+include ../../inputs/common/spcfw_params.lmp
+
+timestep 0.5
+neighbor 2.0 bin
+neigh_modify every 1 delay 0 check yes
+kspace_style ewald 1.0e-6
+
+thermo_style custom step temp press density etotal pe ke ebond eangle evdwl ecoul elong
+thermo 200
+
+min_style cg
+minimize 1.0e-4 1.0e-6 1000 10000
+
+velocity all create ${t_target} ${seed} mom yes rot yes dist gaussian
+velocity all zero linear
+reset_timestep 0
+
+# Nose-Hoover NVT: Q = Nf * kB * T * tdamp^2
+fix thermostat all nvt temp ${t_target} ${t_target} ${tdamp}
+
+dump traj all custom ${dump_every} traj.lammpstrj id mol type x y z vx vy vz
+dump_modify traj sort id
+
+run ${nsteps}
+
+write_restart final.restart
+write_data    final.data
