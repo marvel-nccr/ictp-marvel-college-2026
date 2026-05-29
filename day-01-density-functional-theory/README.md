@@ -57,9 +57,29 @@ The table below shows the total energy of bulk NaCl as a function of the kinetic
 
 Plot the energy *vs.* cutoff energy data, and determine when the total energy is converged to within 5 meV/atom.
 
-> [!NOTE]
+> [!TIP]
 >
 > `pw.x` reports the energy in units of Rydbergs per simulation cell.
+
+> [!NOTE]
+> The `qe` environment comes with an alpha release of the new [`qe-tools` package](https://qe-tools.readthedocs.io/en/latest/), which can help with parsing Quantum ESPRESSO outputs.
+> For example:
+>
+> ```python
+> from qe_tools.outputs import PwOutput
+>
+> pw_out = PwOutput.from_files(stdout='out/NaCl.ecut=20.out')
+> pw_out.outputs.total_energy
+> ```
+>
+> `qe-tools` returns total energies in Ry by default. To get a unit-aware [`pint`](https://pint.readthedocs.io/en/stable/) quantity that you can convert into any unit:
+>
+> ```python
+> total_energy = pw_out.get_output('total_energy', to='pint')
+> total_energy.to('eV')
+> ```
+>
+> See the [`qe-tools.ipynb`](qe-tools.ipynb) notebook for some more examples, or the [`qe-tools` documentation](https://qe-tools.readthedocs.io/en/latest/getting_started/).
 
 <details>
 <summary><b>Solution</b></summary>

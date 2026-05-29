@@ -6,6 +6,17 @@
   gather_facts: false
   tasks:
 
-  - name: Greet
-    ansible.builtin.debug:
-      msg: "Hello from the post-distribution playbook!"
+  - name: Check installed qe-tools version in the qe conda env
+    become_user: max
+    ansible.builtin.command:
+      cmd: ~/.conda/envs/qe/bin/pip show qe-tools
+    register: qe_tools_show
+    changed_when: false
+    failed_when: false
+
+  - name: Install qe-tools 3.0.0a4 (with pint extra) into the qe conda env
+    become_user: max
+    ansible.builtin.command:
+      cmd: ~/.conda/envs/qe/bin/pip install 'qe-tools[pint]==3.0.0a4'
+    when: "'Version: 3.0.0a4' not in qe_tools_show.stdout"
+    changed_when: true
