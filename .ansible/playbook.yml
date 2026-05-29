@@ -20,3 +20,18 @@
       cmd: ~/.conda/envs/qe/bin/pip install 'qe-tools[pint]==3.0.0a4'
     when: "'Version: 3.0.0a4' not in qe_tools_show.stdout"
     changed_when: true
+
+  - name: Check installed ase-koopmans version in the koopmans conda env
+    become_user: max
+    ansible.builtin.command:
+      cmd: ~/.conda/envs/koopmans/bin/pip show ase-koopmans
+    register: ase_koopmans_show
+    changed_when: false
+    failed_when: false
+
+  - name: Install ase-koopmans 0.1.13 into the koopmans conda env
+    become_user: max
+    ansible.builtin.command:
+      cmd: ~/.conda/envs/koopmans/bin/pip install ase-koopmans==0.1.13
+    when: "'Version: 0.1.13' not in ase_koopmans_show.stdout"
+    changed_when: true
