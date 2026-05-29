@@ -52,13 +52,6 @@
         # `update` — pull fresh material from upstream and, if the bundled
         # ansible playbook changed, replay it to apply system updates.
         update() {
-          local lock=$HOME/.qm-update.lock
-          exec 9>"$lock"
-          if ! flock -n 9; then
-            echo "❌ Another update is already running!" >&2
-            return 1
-          fi
-
           local _qm_origcwd=$PWD
           cd "$HOME/materials" || return 1
 
