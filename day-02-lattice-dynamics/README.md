@@ -52,3 +52,15 @@ Use the **UPET PET-MAD** machine-learning interatomic potential (via ASE) to:
 3. Compute phonon band structures from finite displacements for both materials along the Γ → X → W → X → Γ → L path and compare with the DFPT results.
 
 
+# Example 4: Anharmonicity and thermal lattice expansion
+
+Here we will compute the thermal expansion of Gold using the stochastic self-consistent harmonic approximation.
+We need to activate the `scha` environment:
+
+```bash
+conda activate sscha
+```
+
+Inside the `04_thermal_lattice_expansion` directory we have the results of a DFPT calculation with quantum espresso
+of gold, with the dynamical matrices saved as `gold_harmonic_dyn_X` (X goes from 1 to 13, indicating the index of the 
+irreducible q points in a `4x4x4` mesh of q-points).
