@@ -20,7 +20,7 @@ SPECIAL_POINTS = {"G": [0,0,0],
              "K": [3/8., 3/4., 3/8.]}
 
 # The two dynamical matrix to be compared
-HARM_DYN = 'harmonic_dyn'
+HARM_DYN = 'gold_harmonic_dyn'
 SSCHA_DYN = 'sscha_T300_dyn'
 
 # The number of irreducible q points
