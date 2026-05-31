@@ -13,10 +13,10 @@
       block: |
         # Print only in non-login shells
         shopt -q login_shell || cat << EOM
-        ######################################################################
-        # Welcome to Quantum Mobile for the MARVEL-ICTP College version 2026!
+        ##############################################################
+        # Welcome to Quantum Mobile for the MARVEL-ICTP College 2026!
         # Distributed by the MARVEL NCCR.
-        ######################################################################
+        ##############################################################
         EOM
 
   - name: Update `cdd` and `update` shell helpers
