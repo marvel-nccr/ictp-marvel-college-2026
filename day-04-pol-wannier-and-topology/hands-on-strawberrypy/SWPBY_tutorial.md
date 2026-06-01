@@ -20,16 +20,7 @@ Thursday, 4 June 2026
 
 **Time budget**: 30 minutes
 
-This session continues from the [preliminary exercises](../before/preliminary-exercises/), where you defined the Haldane and Kane-Mele model and studied their topological phase diagrams. Topological properties are known to be robust against weak perturbation $-$ but how weak is "weak"? How does the topology look like in real space? In this tutorial, you will investigate the Haldane model with on-site (Anderson) disorder and vacancies to understand how these forms of disorder affect both the global and real-space topological properties of a material.
-
-> **Prerequisites**
->
-> The package you are going to use is not already installed in the Quantum Mobile, so you will need to install it manually. Continue working in the `wannier` environment. First clone the official git repository, then install the package:
-> ```bash
-> workon wannier
-> git clone https://github.com/strawberrypy-developers/strawberrypy.git
-> pip install ./strawberrypy
-> ```
+This session continues from the [preliminary exercises](../hands-on-pythtb), where you defined the Haldane and Kane-Mele model and studied their topological phase diagrams. Topological properties are known to be robust against weak perturbation $-$ but how weak is "weak"? How does the topology look like in real space? In this tutorial, you will investigate the Haldane model with on-site (Anderson) disorder and vacancies to understand how these forms of disorder affect both the global and real-space topological properties of a material.
 
 > **Documentation**
 >
