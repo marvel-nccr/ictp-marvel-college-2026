@@ -51,6 +51,34 @@ Use the **UPET PET-MAD** machine-learning interatomic potential (via ASE) to:
 2. Relax the unit cell with `FrechetCellFilter` + BFGS and compare the relaxed volume against the EOS minimum.
 3. Compute phonon band structures from finite displacements for both materials along the Γ → X → W → X → Γ → L path and compare with the DFPT results.
 
+### TASKS
+
+<details>
+<summary><b>How do you expect the phonon spectra to change when making `PHONON_DELTA` too large / too small?</b></summary>
+
+The displacement amplitude controls the balance between **numerical noise** and **anharmonic contamination**.
+
+Too small: numerical noise in the MLIP forces starts to dominate. Too large: the linear-response assumption breaks down (anharmonic regime). There's a plateau of stable results in between — find it.
+
+</details>
+
+<details>
+<summary><b>Which part of the phonon spectra exhibits imaginary (plotted as negative) frequencies due to a poorly converged parameter?</b></summary>
+
+It is the acoustic modes at the Gamma point which are the most sensitive — they sample long-range force constants.
+
+</details>
+
+<details>
+<summary><b>Which parameter could this be related to? - Verify numerically by tightening (or losening) that parameter.</b></summary>
+
+The supercell size - try losening from `(4,4,4)` to `(2,2,2)` and see if the imaginary frequencies worsen.
+
+How much longer will a `(5,5,5)` supercell phonon calculation take compared to `(4,4,4)`? (What is the scaling of the finite difference phonon calculations.) 
+
+</details>
+
+
 
 # Example 4: Anharmonicity and thermal lattice expansion
 
