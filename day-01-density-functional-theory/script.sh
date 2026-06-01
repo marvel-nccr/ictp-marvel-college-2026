@@ -36,7 +36,7 @@ for ecut in $ecuts; do
    tstress          = .true.
    tprnfor          = .true.
    outdir           = '$tmp_dir'
-   prefix           = 'NaCl.$ecut'
+   prefix           = 'NaCl.ecut=$ecut'
    pseudo_dir       = '$pseudo_dir'
 /
 &SYSTEM
@@ -71,11 +71,11 @@ EOF
 
    # Run the calculation
    # '<' feeds the input file to pw.x (stdin redirection)
-   # '>' sends the output to a file (stdout redirection)
-   echo "Running: $pw_launch < $input > $output"
-   $pw_launch < "$input" > "$output"
+   # '&>' sends the output to a file (stdout and stderr redirection)
+   echo "Running: $pw_launch < $input &> $output"
+   $pw_launch < "$input" &> "$output"
 
 done
 
 # Clean up temporary files created during calculations
-rm -r "$tmp_dir"/*
+find "$tmp_dir" -type f ! -name '*.xml' -delete

@@ -1,0 +1,60 @@
+{
+    "workflow": {
+        "task": "singlepoint",
+        "functional": "ki",
+        "method": "dfpt",
+        "gb_correction": false,
+        "init_orbitals": "mlwfs",
+        "orbital_groups_spread_tol": 0.01,
+        "pseudo_library": "PseudoDojo/0.4/LDA/SR/standard/upf",
+        "calculate_bands": true
+    },
+    "engine": {
+        "from_scratch": true,
+        "commands": {
+            "pw": {
+                "npool": 2
+            }
+        }
+    },
+    "atoms": {
+        "cell_parameters": {
+            "periodic": true,
+            "ibrav": 2,
+            "celldms": {"1": 10.2622}
+        },
+        "atomic_positions": {
+            "units": "crystal",
+            "positions": [["Si", 0.00, 0.00, 0.00],
+                          ["Si", 0.25, 0.25, 0.25]]
+        }
+    },
+    "kpoints": {
+        "grid": [2, 2, 2],
+        "offset": [0, 0, 0],
+        "path": "LGXU,KG"
+    },
+    "calculator_parameters": {
+        "ecutwfc": 40.0,
+        "pw": {
+            "system": {
+                "nbnd": 20
+            }
+        },
+        "w90": {
+            "bands_plot": true,
+            "projections": [[{"fractional_site": [ 0.25, 0.25, 0.25 ], "ang_mtm": "sp3"}],
+                            [{"fractional_site": [ 0.25, 0.25, 0.25 ], "ang_mtm": "sp3"}]],
+            "dis_froz_max": 9.2,
+            "dis_win_max": 20.0
+        },
+        "ui": {
+            "smooth_int_factor": 3
+        }
+    },
+    "plotting": {
+        "Emin": -15,
+        "Emax": 10,
+        "degauss": 0.2
+    }
+}

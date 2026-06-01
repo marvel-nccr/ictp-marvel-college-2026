@@ -1,21 +1,11 @@
 # Run the calculations in the following way:
 
-Band structure calculation:
+pw.x < CrO.scf.in |tee CrO.scf.out
 
-pw.x < MnO.scf.in |tee MnO.scf.out
+pw.x < CrO.bands.in |tee CrO.bands.out
 
-pw.x < MnO.bands.in |tee MnO.bands.out
+bands.x < CrO.bands.pp.in |tee CrO.bands.pp.out
 
-bands.x < MnO.bands.pp.in |tee MnO.bands.pp.out
+plotband.x < CrO.plotband.in |tee CrO.plotband.out
 
-plotband.x < MnO.plotband.in |tee MnO.plotband.out
-
-evince MnO_bands.ps
-
-
-Calculation of Hubbard U and V:
-
-pw.x < MnO.scf.UV.in |tee MnO.scf.UV.out
-
-hp.x < MnO.hp.in |tee MnO.hp.out
-
+evince CrO_bands.ps

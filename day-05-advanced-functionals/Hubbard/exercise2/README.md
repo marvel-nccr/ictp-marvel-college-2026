@@ -1,11 +1,7 @@
 # Run the calculations in the following way:
 
-pw.x < FeO.scf.in |tee FeO.scf.out
+pw.x < CoO.scf.in |tee CoO.scf.out
 
-pw.x < FeO.nscf.in |tee FeO.nscf.out
+hp.x < CoO.hp.in |tee CoO.hp.out
 
-projwfc.x < FeO.projwfc.in |tee FeO.projwfc.out
-
-gnuplot plot_pdos.gp
-
-evince FeO_PDOS.eps
+pw.x < CoO.vcrelax.in |tee CoO.vcrelax.out
