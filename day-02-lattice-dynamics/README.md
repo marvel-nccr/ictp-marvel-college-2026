@@ -34,9 +34,9 @@ Compute and plot the full dispersion for AlAs, including the non-analytic correc
 
 ### Example 3: Relaxation and phonons with a MLIP (`03_phonons_mlip`)
 
-> **Environment**: this part uses a different Python environment. Deactivate the QE environment first, then activate the MLIP one:
+> **Environment**: this part uses a different Python environment. Activate the `metatomic` environment:
 > ```bash
-> conda deactivate qe
+> conda activate metatomic
 > ```
 
 Open the notebook in JupyterLab, either launch it from the desktop shortcut, or from the terminal:
