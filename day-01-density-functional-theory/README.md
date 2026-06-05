@@ -452,9 +452,9 @@ Given a Birch-Murnagahn equation of state, we can predict the pressure at arbitr
 
 ## Problem 7: Elastic constants
 
-Elastic constants describe how a material responds to deformation (think of them as a generalisation of the spring constant *k*). Hooke's law $\mathbf{F} = -k\,\mathbf{x}$ generalises to continuous media as
+Elastic constants describe how a material responds to deformation (think of them as a generalisation of the spring constant *k*). Hooke's law $\mathbf{F} = -k\mathbf{x}$ generalises to continuous media as
 
-$$ \sigma_{ij} = \sum_{kl} C_{ijkl}\, \epsilon_{kl}, $$
+$$ \sigma_{ij} = \sum_{kl} C_{ijkl} \epsilon_{kl}, $$
 
 where $\sigma_{ij}$ is the stress tensor, $\epsilon_{kl} = \Delta L / L$ is the strain tensor, and $C_{ijkl}$ is the **stiffness tensor** — an intrinsic property of the material. This is a linear approximation, valid only for small strains.
 
@@ -472,7 +472,7 @@ $$ \begin{pmatrix} \mathbf{a}'_1 \cr \mathbf{a}'_2 \cr \mathbf{a}'_3 \end{pmatri
 
 To second order, the total energy of the distorted lattice is
 
-$$ E \approx E_0 - P(V_0)\, \Delta V + \tfrac{1}{2} V_0 \sum_{i=1}^{6} \sum_{j=1}^{6} C_{ij}\, e_i e_j. $$
+$$ E \approx E_0 - P(V_0) \Delta V + \tfrac{1}{2} V_0 \sum_{i=1}^{6} \sum_{j=1}^{6} C_{ij} e_i e_j. $$
 
 In this lab we will choose volume-conserving strains ($\Delta V = 0$), so the linear-in-strain term vanishes and the energy isolates particular $C_{ij}$ depending on the strain pattern.
 
@@ -508,7 +508,7 @@ $$ \varepsilon = \begin{pmatrix} x & 0 & 0 \cr 0 & -x & 0 \cr 0 & 0 & \dfrac{x^2
 
 For different values of $x$, compute the strained lattice vectors $\mathbf{a}'_i$, run a calculation, and obtain the energy profile $E(x)$. By symmetry,
 
-$$ \Delta E(x) = \Delta E(-x) = V_0 (C_{11} - C_{12})\, x^2. $$
+$$ \Delta E(x) = \Delta E(-x) = V_0 (C_{11} - C_{12}) x^2. $$
 
 Combine this with $B = \tfrac{1}{3}(C_{11} + 2 C_{12})$ — using the Birch–Murnaghan value of $B$ from Problem 6 — to extract $C_{11}$ and $C_{12}$.
 
@@ -555,7 +555,7 @@ celldm2=$(echo "(1 - $x) / (1 + $x)" | bc -l)
 celldm3=$(echo "1 / ((1 - ($x)^2) * (1 + $x))" | bc -l)
 ```
 
-For each strain $x$, build the strained lattice vectors, run a `relax` calculation, and plot $\Delta E(x)$. Fitting $\Delta E = V_0 (C_{11} - C_{12})\, x^2$ gives $C_{11} - C_{12}$; combining this with $B = \tfrac{1}{3}(C_{11} + 2 C_{12})$ from Problem 6 then yields $C_{11} \approx 47$ GPa and $C_{12} \approx 12$ GPa, close to the experimental values.
+For each strain $x$, build the strained lattice vectors, run a `relax` calculation, and plot $\Delta E(x)$. Fitting $\Delta E = V_0 (C_{11} - C_{12}) x^2$ gives $C_{11} - C_{12}$; combining this with $B = \tfrac{1}{3}(C_{11} + 2 C_{12})$ from Problem 6 then yields $C_{11} \approx 47$ GPa and $C_{12} \approx 12$ GPa, close to the experimental values.
 
 ![Parabolic fit for C11 and C12](solutions/fit_c11_c12.png)
 
@@ -569,7 +569,7 @@ $$ \varepsilon = \begin{pmatrix} 0 & x/2 & 0 \cr x/2 & 0 & 0 \cr 0 & 0 & \dfrac{
 
 which gives
 
-$$ \Delta E(x) = \Delta E(-x) = \tfrac{1}{2} V_0\, C_{44}\, x^2. $$
+$$ \Delta E(x) = \Delta E(-x) = \tfrac{1}{2} V_0 C_{44} x^2. $$
 
 Model this with the 8-atom monoclinic unit cell (`ibrav=12`):
 
@@ -592,7 +592,7 @@ celldm3=$(echo "4 / ((4 - $x^2) * sqrt(1 + $x^2/4))" | bc -l)
 celldm4=$(echo "$x / (1 + $x^2/4)" | bc -l)
 ```
 
-Likewise, plot $\Delta E(x)$ for the monoclinic shear strain and fit $\Delta E = \tfrac{1}{2} V_0 C_{44}\, x^2$ to extract $C_{44} \approx 12$ GPa, close to the experimental value.
+Likewise, plot $\Delta E(x)$ for the monoclinic shear strain and fit $\Delta E = \tfrac{1}{2} V_0 C_{44} x^2$ to extract $C_{44} \approx 12$ GPa, close to the experimental value.
 
 ![Parabolic fit for C44](solutions/fit_c44.png)
 
@@ -709,7 +709,7 @@ $`
 \mathbf{b}_1 = (-1, 1, 1), \qquad \mathbf{b}_2 = (1,-1,1), \qquad \mathbf{b}_3 = (1,1,-1).
 `$
 
-A **k**-point with crystal coordinates $`(k_1, k_2, k_3)`$ corresponds to the Cartesian vector $`k_1\,\mathbf{b}_1 + k_2\,\mathbf{b}_2 + k_3\,\mathbf{b}_3`$. Verify X as an example:
+A **k**-point with crystal coordinates $`(k_1, k_2, k_3)`$ corresponds to the Cartesian vector $`k_1\mathbf{b}_1 + k_2\mathbf{b}_2 + k_3\mathbf{b}_3`$. Verify X as an example:
 
 $`
 \tfrac{1}{2}(-1,1,1) + 0\cdot(1,-1,1) + \tfrac{1}{2}(1,1,-1) = (0,1,0). \quad\checkmark

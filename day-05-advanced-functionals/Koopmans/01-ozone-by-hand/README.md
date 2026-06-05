@@ -180,7 +180,7 @@ $`\lambda_{\text{HOMO}} = \frac{\varepsilon^\text{KI}_\text{HOMO}(\alpha_0) - \v
 
 Setting $`\varepsilon^\text{KI}_\text{HOMO}(\alpha_\text{opt}) = E^\text{DFT}[N] - E^\text{DFT}[N{-}1]`$ and solving for $\alpha_\text{opt}$ we get
 
-$`\alpha_\text{opt} = \alpha_0\,\frac{\big(E^\text{DFT}[N] - E^\text{DFT}[N{-}1]\big) - \varepsilon^\text{DFT}_\text{HOMO}}{\varepsilon^\text{KI}_\text{HOMO}(\alpha_0) - \varepsilon^\text{DFT}_\text{HOMO}}.`$
+$`\alpha_\text{opt} = \alpha_0\frac{\big(E^\text{DFT}[N] - E^\text{DFT}[N{-}1]\big) - \varepsilon^\text{DFT}_\text{HOMO}}{\varepsilon^\text{KI}_\text{HOMO}(\alpha_0) - \varepsilon^\text{DFT}_\text{HOMO}}.`$
 
 </details>
 
@@ -193,7 +193,7 @@ Now plug numbers into the equation you derived in Part A. Read $`\varepsilon^\te
 
 First convert the ΔSCF target to eV:
 
-$$E^\text{DFT}[N] - E^\text{DFT}[N{-}1] = (-47.5296) - (-47.0705) \,\text{Ha} = -.4591\,\text{Ha} \approx -12.49\,\text{eV}.$$
+$$E^\text{DFT}[N] - E^\text{DFT}[N{-}1] = (-47.5296) - (-47.0705) \text{Ha} = -.4591\text{Ha} \approx -12.49\text{eV}.$$
 
 Then plug into the formula from Part A with $\alpha_0 = 0.7$:
 
