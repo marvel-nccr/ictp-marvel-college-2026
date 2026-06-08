@@ -182,3 +182,12 @@
       cmd: ~/.conda/envs/koopmans/bin/pip install ase-koopmans==0.1.13
     when: "'Version: 0.1.13' not in ase_koopmans_show.stdout"
     changed_when: true
+
+  - name: Clone/update labcosmo_ictp_school models (main branch only)
+    become_user: max
+    ansible.builtin.git:
+      repo: https://github.com/ppegolo/labcosmo_ictp_school.git
+      dest: /home/max/cosmo_models
+      version: main
+      single_branch: true
+      force: true
