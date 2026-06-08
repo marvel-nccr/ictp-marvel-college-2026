@@ -191,3 +191,15 @@
       version: main
       single_branch: true
       force: true
+
+  - name: Create density conda env from spec
+    become_user: max
+    ansible.builtin.command:
+      cmd: ~/.conda/bin/mamba env create -n density -f {{ playbook_dir }}/files/density-env.yml -y
+      creates: /home/max/.conda/envs/density
+
+  - name: Create nmr conda env from spec
+    become_user: max
+    ansible.builtin.command:
+      cmd: ~/.conda/bin/mamba env create -n nmr -f {{ playbook_dir }}/files/nmr-env.yml -y
+      creates: /home/max/.conda/envs/nmr
