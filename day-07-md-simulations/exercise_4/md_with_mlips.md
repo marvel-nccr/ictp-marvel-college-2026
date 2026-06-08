@@ -1,5 +1,9 @@
 # MD with MLIPs
 
+**Tutors:** Paolo Pegolo, Joseph W. Abbott, Matthias Kellner, Filippo Bigi
+
+---
+
 ## 1. Background and context
 
 A machine-learning interatomic potential (MLIP) predicts energies and forces
