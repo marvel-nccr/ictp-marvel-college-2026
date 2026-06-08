@@ -1,11 +1,11 @@
 # Run the calculations in the following way:
 
-pw.x < CrO.scf.in |tee CrO.scf.out
+pw.x < FeO.scf.in |tee FeO.scf.out
 
-pw.x < CrO.bands.in |tee CrO.bands.out
+pw.x < FeO.nscf.in |tee FeO.nscf.out
 
-bands.x < CrO.bands.pp.in |tee CrO.bands.pp.out
+projwfc.x < FeO.projwfc.in |tee FeO.projwfc.out
 
-plotband.x < CrO.plotband.in |tee CrO.plotband.out
+gnuplot plot_pdos.gp
 
-evince CrO_bands.ps
+evince FeO_PDOS.eps

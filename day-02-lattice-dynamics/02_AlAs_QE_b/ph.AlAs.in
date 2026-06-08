@@ -1,0 +1,13 @@
+Phonons on a uniform q-grid
+ &inputph
+  prefix='AlAs',           ! Specify a prefix
+  tr2_ph = 1.0d-14,
+  amass(1) = 26.98,
+  amass(2) = 74.92,
+  ldisp = .true.,
+  nq1 = 2                 ! Specify a uniform q-grid
+  nq2 = 2 
+  nq3 = 2 
+  outdir='./out'
+  fildyn='AlAs.dyn',
+ /
