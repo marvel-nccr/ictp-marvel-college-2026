@@ -16,7 +16,7 @@ is expensive, so the fewer cycles needed the better.
 The default starting point in most codes — including PySCF — is the **superposition of
 atomic densities** (SAD): pre-computed atomic density matrices are stacked
 block-diagonally. This ignores all bonding and molecular charge redistribution, so it
-can be a poor starting point for polar or conjugated molecules.
+can be a poor starting point for molecules with complex bonding effects.
 
 A pretrained ML model predicts the RI expansion coefficients $\{c_P\}$ of the full
 molecular electron density directly from the atomic positions. Converting these to a
@@ -25,15 +25,27 @@ solution, reducing the number of iterations to convergence.
 
 ## 2. Reading material
 
-## 3. Exercise: the IR spectrum of a single gas-phase water molecule
+The recipe [**"Machine-learned dipoles and infrared spectroscopy of liquid water"**](https://atomistic-cookbook.org/examples/ml-density/ml-density.html)
+computes an SCF initial guess for an organic molecule with an ML surrogate model and
+uses it to speed up SCF. The key ideas:
 
-<EXPLAIN>
+<TODO>
+
+
+👉 https://atomistic-cookbook.org/examples/ml-density/ml-density.html
+
+By the end you should have some ideas about these questions: <TODO>
+
+## 3. Exercise: accelerating SCF convergence with ML intial guesses
+
+<TODO>
 
 1. Load a set of 10 small organic molecules.
 2. Visualise them with chemiscope and choose your favourite.
 3. For your chosen molecule, compare the number of SCF iterations needed with:
    - the SAD initial guess (default)
    - the ML-predicted density as the initial guess
+4. Repeat for 9 more organic molecules and plot the results.
 
 ### Provided code
 
@@ -41,9 +53,9 @@ solution, reducing the number of iterations to convergence.
 `pet-scfbench-rho-coeffs-jfit.pt` is stored elsewhere on your virtual machine
 (assuming you have run `update` before starting).
 
-**(ii) Imports.** The imports for the rest of the exercise:
+**(ii) Imports.**
 
-
+The imports for the rest of the exercise:
 
 ```python
 import ase.io
@@ -57,8 +69,8 @@ from pyscf import dft
 
 from rho_utils import atoms_to_pyscf, ri_coeffs_mts_to_pyscf, dm_from_ri_coefficients, run_scf
 
-BASIS    = "def2-svp"
-XC       = "pbe"
+BASIS = "def2-svp"
+XC = "pbe"
 AUXBASIS = "def2-universal-jfit"
 MODEL = "/home/max/cosmo_models/pet-scfbench-rho-coeffs-jfit.pt"
 TARGET_NAME = "mtt::rho_c_jfit_overlap"
@@ -76,7 +88,7 @@ calculator = MetatomicCalculator(model)
 Load with `ASE`:
 
 ```python
-frames = ase.io.read("./molecules.xyz", index=":")
+frames = ase.io.read("molecules.xyz", index=":")
 
 for i, f in enumerate(frames):
     print(f"  {i}: {f.get_chemical_formula():8s}  ({len(f)} atoms)")
@@ -96,11 +108,9 @@ chemiscope.show(
 )
 ```
 
-
 **(v) Choose one molecule and run SCF**
 
 Pick the index of your favourite molecule (0-indexed).
-
 
 ```python
 i = ...  # TODO
@@ -114,7 +124,8 @@ chemiscope.show([atoms], mode="structure")
 
 SAD baseline:
 ```python
-mol    = atoms_to_pyscf(atoms, BASIS)
+# Run SCF using the SAD initial guess
+mol = atoms_to_pyscf(atoms, BASIS)
 mf_sad = dft.RKS(mol)
 mf_sad.xc = XC
 dm_sad = mf_sad.get_init_guess()   # superposition of atomic densities
@@ -125,28 +136,21 @@ print(f"SAD initial guess → {n_sad} SCF cycles")
 
 ML initial guess:
 ```python
+# Run SCF using the ML initial guess
 ml_coefficients = calculator.run_model(
     atoms, {TARGET_NAME: ModelOutput(per_atom=True)}
 )[TARGET_NAME]
 
 dm_ml  = dm_from_ri_coefficients(atoms, ml_coefficients, XC, BASIS, AUXBASIS)
+
+# Run SCF
 _, n_ml = run_scf(atoms, XC, BASIS, dm0=dm_ml)
 print(f"ML initial guess  → {n_ml} SCF cycles")
 print(f"Speedup: {n_sad / n_ml:.1f}x fewer iterations")
 ```
-
-
-<details>
-<summary>💭 Think — why does the ML guess help?</summary>
-
-The ML model has learned to predict the full molecular density, including the effects of
-bonding and charge polarisation, directly from the atomic positions. Its prediction is
-much closer to the converged density than the SAD superposition, so the SCF needs fewer
-iterations to reach self-consistency. The speedup tends to be larger for molecules where
-SAD is worst (strong polarisation, conjugation), and due to the ~ O(3) complexity of DFT
-may be the systems where the benefit of an ML initial guess in most pronounced.
-
-</details>
+The function `dm_from_ri_coefficients` is required to convert the
+RI coefficients to the density matrix. If you are curious, open file `rho_utils.py` and
+inspect this function to see how it works.
 
 
 **(vii) Repeat for all 10 molecules**
@@ -192,8 +196,55 @@ ax.bar(
     color="C1",
     edgecolor="white"
 )
-ax.set_xticks(x); ax.set_xticklabels(names, rotation=30, ha="right")
+ax.set_xticks(x)
+ax.set_xticklabels(names, rotation=30, ha="right")
 ax.set_ylabel("SCF iterations to convergence")
 ax.set_title("SAD vs ML initial guess")
-ax.legend(); ax.spines[["top","right"]].set_visible(False)
+ax.legend()
+ax.spines[["top","right"]].set_visible(False)
 ```
+
+## 4. Discussion points
+
+Once you've finished the exercise, or while you go, think about these prompts and discuss with your neighbor.
+
+<details>
+<summary>💭 Why does the ML guess help?</summary>
+
+The ML model has learned to predict the full molecular density, including the effects
+of bonding and charge polarisation, directly from the atomic positions. Its prediction
+is much closer to the converged density than the SAD superposition, so the SCF needs
+fewer iterations to reach self-consistency. 
+
+The speedup tends to be larger for molecules where SAD is worst (strong polarisation,
+conjugation), and due to the ~ O(3) complexity of DFT may be the systems where the
+benefit of an ML initial guess in most pronounced.
+
+</details>
+
+<details>
+<summary>💭 Beyond the number of SCF cycles saved, what impacts whether the actual wall time of the SCF calculation is decreased?</summary>
+
+<TODO> Mention: model inference (model size and auxiliary basis size dependent), Fock
+construction and diagonalization, integrating Ml codes with DFT codes!
+
+</details>
+
+
+<details>
+<summary>💭 Instead of going through the denisty matrix, could you compute, for example, the dipole moment directly from the predicted coefficients? </summary>
+
+Given the predicted RI coefficients, the electric dipole moment can be computed
+**directly** — without constructing a density matrix or running any SCF diagonalisation:
+
+$$\boldsymbol{\mu} = \underbrace{\sum_i Z_i\, \mathbf{R}_i}_{\text{nuclear}} \;-\; \underbrace{\sum_P c_P \int \mathrm{d}^3r\; \chi_P(\mathbf{r})\, \mathbf{r}}_{\text{electronic}}$$
+
+The nuclear term is a simple weighted sum of atomic positions. The electronic term
+requires the first spatial moment $\int \mathrm{d}^3r\; \chi_P(\mathbf{r})\, \mathbf{r}$
+for each auxiliary function — a three-component vector that is evaluated numerically
+on a quadrature grid.
+
+<TODO> Finish: what lack of mathematical constraints might make this not as effective as
+going through the density matrix?
+
+</details>
