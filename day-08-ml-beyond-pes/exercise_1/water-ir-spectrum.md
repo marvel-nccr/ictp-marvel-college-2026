@@ -6,7 +6,7 @@ Activate the environment for this exercise:
 workon metatomic
 ```
 
-## 1. What this is about
+## 1. Background and context
 
 Infrared (IR) spectroscopy measures how a sample absorbs infrared light. Those photons
 carry the energy of **molecular vibrations**, so an IR spectrum is a direct window onto
@@ -21,7 +21,7 @@ carries three pieces of information:
 - **width**: the vibrational lifetime and environment,
 - **intensity**: how strongly the dipole responds to the motion.
 
-## 2. The recipe you will read
+## 2. Reading material
 
 The recipe [**"Machine-learned dipoles and infrared spectroscopy of liquid water"**](https://atomistic-cookbook.org/examples/water-ir-spectrum/water-ir-spectrum.html)
 computes the IR spectrum of *liquid water* from molecular dynamics (MD). The key ideas:
@@ -71,13 +71,15 @@ both the forces (to run the dynamics) and the dipole (to build the spectrum), an
 ### Provided code
 
 **(i) Get the model.** The fine-tuned energy+dipole checkpoint
-`pet-mad-xs-v1.5.0_SCAN_dipole.ckpt` is already in the current directory. Export it to a
-TorchScript model the calculator can load. (In a Jupyter notebook, prefix the line with
-`!` to run it as a shell command.)
+`pet-mad-xs-v1.5.0_SCAN_dipole.ckpt` is stored elsewhere on your virtual machine
+(assuming you have run `update` before starting).
+
+Export it to a TorchScript model the calculator can load. (In a Jupyter notebook, prefix
+the line with `!` to run it as a shell command.)
 
 ```bash
 # export the checkpoint to a TorchScript model (.pt) that the calculator can load
-mtt export pet-mad-xs-v1.5.0_SCAN_dipole.ckpt -o pet-mad-xs-v1.5.0_SCAN_dipole.pt
+mtt export /home/max/cosmo_models/pet-mad-xs-v1.5.0_SCAN_dipole.ckpt -o ./pet-mad-xs-v1.5.0_SCAN_dipole.pt
 ```
 
 **(ii) Imports.** The imports for the rest of the exercise:
