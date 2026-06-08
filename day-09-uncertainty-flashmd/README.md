@@ -20,7 +20,7 @@ Folder: [`uncertainty/`](uncertainty/) (see its `README.md` for details).
 
 To get started, open a terminal and run the following commands:
 
-```
+```bash
 cd uncertainty  # cd into the uncertainty folder
 workon metatomic  # activate the `metatomic` environment
 ```
@@ -36,7 +36,8 @@ Open the notebook for the part you want to work on from the JupyterLab file brow
 select the **Python (metatomic)** kernel.
 
 **Goal.** Learn three increasingly demanding ways of attaching error bars to the
-predictions of an ML potential, using PET-MAD's built-in uncertainty quantification
+predictions of an ML potential or simulations with the potential.
+All using PET-MAD's built-in uncertainty quantification
 (last-layer prediction rigidity and committee/shallow-ensemble models):
 
 1. **Dataset uncertainties** — estimate per-structure uncertainties on a validation set
