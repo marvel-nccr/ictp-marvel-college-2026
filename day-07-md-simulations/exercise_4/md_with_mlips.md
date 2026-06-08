@@ -294,9 +294,16 @@ parity(
 ### (3) Fine-tune PET-MAD-XS
 
 Now build the second model by fine-tuning the universal PET-MAD-XS instead of
-starting from random weights. You'll find the pre-trained
-`pet-mad-xs-v1.5.0.ckpt` checkpoint in the current directory to avoid too many
-competing requests to the server.
+starting from random weights. The pre-trained checkpoints are distributed on
+HuggingFace, but to avoid too many competing requests to the server you will
+find them already downloaded in the Virtual Machine. Copy the PET-MAD-XS
+checkpoint in the current exercise's folder with
+
+```bash
+cdd 07
+cd exercise_4
+cp /home/max/cosmo_models/pet-mad-xs-v1.5.0.ckpt .
+```
 
 Fine-tuning needs the *checkpoint* rather than an exported `.pt` model, because
 the checkpoint still carries everything needed to keep training (the full
