@@ -25,7 +25,7 @@ solution, reducing the number of iterations to convergence.
 
 ## 2. Reading material
 
-The recipe [**"Machine-learned dipoles and infrared spectroscopy of liquid water"**](https://atomistic-cookbook.org/examples/ml-density/ml-density.html)
+The recipe [**"ML surrogate for the electron density and derived properties"**](https://atomistic-cookbook.org/examples/ml-density/ml-density.html)
 computes an SCF initial guess for an organic molecule with an ML surrogate model and
 uses it to speed up SCF. The key ideas:
 
@@ -49,9 +49,10 @@ By the end you should have some ideas about these questions: <TODO>
 
 ### Provided code
 
-**(i) Get the model.** The electron density model
-`pet-scfbench-rho-coeffs-jfit.pt` is stored elsewhere on your virtual machine
-(assuming you have run `update` before starting).
+**(i) Get the model.** 
+
+The electron density model `pet-scfbench-rho-coeffs-jfit.pt` is stored elsewhere on your
+virtual machine (assuming you have run `update` before starting).
 
 **(ii) Imports.**
 
@@ -248,3 +249,10 @@ on a quadrature grid.
 going through the density matrix?
 
 </details>
+
+
+## 5. Further reading
+
+The following papers, in chronological order, are good reads for density learning:
+
+1. <TODO>
