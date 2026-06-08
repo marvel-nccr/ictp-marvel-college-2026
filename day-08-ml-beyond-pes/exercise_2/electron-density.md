@@ -98,15 +98,7 @@ for i, f in enumerate(frames):
 Visualise with `chemiscope`:
 
 ```python
-chemiscope.show(
-    frames,
-    properties={"n_atoms": [len(f) for f in frames]},
-    settings=chemiscope.quick_settings(
-        trajectory=True,
-        map_settings={"x": {"property": "n_atoms"}, "y": {"property": "n_atoms"}},
-    ),
-    mode="default",
-)
+chemiscope.show(frames, mode="default")
 ```
 
 **(v) Choose one molecule and run SCF**
