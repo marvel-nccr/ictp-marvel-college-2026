@@ -103,9 +103,9 @@ warnings.filterwarnings("ignore", message=".*invalid value encountered in scalar
 MODEL = "pet-mad-xs-v1.5.0_SCAN_dipole.pt"   # the model you exported in step (i)
 ```
 
-**(iii) The molecular dynamics.** A short constant-temperature (CSVR) run that records the
-molecular dipole at every saved frame. It uses the two objects *you* will define,
-`atoms` and `calc`, and reads the dipole through `current_dipole()`.
+**(iii) The molecular dynamics.** A short constant-temperature (CSVR) run that
+records the molecular dipole at every saved frame. It uses the two objects *you*
+will define, `atoms` and `calc`.
 
 ```python
 TIMESTEP = 0.5 * units.fs
@@ -115,24 +115,6 @@ N_FRAMES = 2000              # recorded production frames
 STRIDE = 4                   # MD steps between saved frames -> save every 2 fs
 DT_FS = STRIDE * TIMESTEP / units.fs
 TAUT = 100 * units.fs        # thermostat coupling time
-
-
-def current_dipole():
-    """Read the molecular dipole (in Debye) from the calculator.
-
-    Why is this written this way? Because of how ASE calculators work. A calculator is
-    lazy: it only runs the model when you ask it for a property, e.g. with
-    ``mol.get_potential_energy()``. The dipole is not one of metatomic's standard
-    properties, so the calculator stores it separately, in ``calc.additional_outputs``,
-    every time it evaluates the model. So the procedure is: first trigger an evaluation
-    at the current geometry (we do that in the MD loop with ``mol.get_potential_energy()``),
-    then read the dipole back from there.
-
-    ``additional_outputs["mtt::dipole"]`` is a metatensor ``TensorMap``; the indexing
-    below just transforms it into a plain length-3 numpy array (the x, y, z components).
-    """
-    block = calc.additional_outputs["mtt::dipole"].block(0)
-    return block.values.detach().cpu().numpy()[0, :, 0]
 
 
 def run_single_trajectory(rng):
@@ -147,8 +129,11 @@ def run_single_trajectory(rng):
     frames = []
     dipoles = np.zeros((N_FRAMES, 3))
     for i in range(N_FRAMES):
-        mol.get_potential_energy()                 # run the model at the current geometry
-        mu = current_dipole()                      # ...so this reads this frame's dipole
+        mol.get_potential_energy()              # run the model at the current geometry
+        block = calc.additional_outputs[
+            "mtt::dipole"
+        ].block(0) # extra outputs are stored here
+        mu = block.values.detach().cpu().numpy()[0, :, 0]
         frame = mol.copy()
         frame.info["dipole"] = mu
         frames.append(frame)
