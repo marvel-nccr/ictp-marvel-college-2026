@@ -1,6 +1,6 @@
 # Uncertainty quantification & FlashMD: Hands-on session
 
-**Tutors**: List here
+**Tutors**: Filippo and Matthias
 
 ---
 
@@ -11,12 +11,18 @@ This session has two independent parts, each in its own subfolder:
   the way to thermodynamic averages.
 - **`flashmd/`** — long-stride molecular dynamics with the universal **FlashMD** model.
 
-## Getting started
 
-Open a terminal and run:
+---
 
-```bash
-cdd 9
+## Part 1 — Uncertainty quantification with PET-MAD
+
+Folder: [`uncertainty/`](uncertainty/) (see its `README.md` for details).
+
+To get started, open a terminal and run the following commands:
+
+```
+cd uncertainty  # cd into the uncertainty folder
+workon metatomic  # activate the `metatomic` environment
 ```
 
 This moves into this directory and activates the `metatomic` Python environment. Then
@@ -28,15 +34,6 @@ jupyter lab
 
 Open the notebook for the part you want to work on from the JupyterLab file browser and
 select the **Python (metatomic)** kernel.
-
-> If `cdd` is not available, activate the environment manually with
-> `workon metatomic`.
-
----
-
-## Part 1 — Uncertainty quantification with PET-MAD
-
-Folder: [`uncertainty/`](uncertainty/) (see its `README.md` for details).
 
 **Goal.** Learn three increasingly demanding ways of attaching error bars to the
 predictions of an ML potential, using PET-MAD's built-in uncertainty quantification
@@ -62,10 +59,9 @@ _Content to be added by the FlashMD tutors._
 ## References
 
 - **PET-MAD**: Mazitov *et al.*, 2025 — <https://arxiv.org/abs/2503.14118>
-- **Shallow-ensemble UQ**: Kellner & Ceriotti, *Uncertainty quantification by direct
-  propagation of shallow ensembles*, Mach. Learn.: Sci. Technol. **5**, 035006 (2024) —
-  <https://arxiv.org/abs/2402.16621>
 - **Last-layer prediction rigidity (LLPR) uncertainties**: Bigi *et al.*, 2024 —
   <https://arxiv.org/abs/2403.02251>
+- **Shallow-ensemble UQ**: Kellner & Ceriotti, *Uncertainty quantification by direct
+  propagation of shallow ensembles*, <https://arxiv.org/abs/2402.16621>
 - **Error propagation / calibration**: Imbalzano *et al.*, 2021 —
   <https://arxiv.org/abs/2011.08828>
