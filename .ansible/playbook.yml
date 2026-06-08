@@ -198,8 +198,20 @@
       cmd: ~/.conda/bin/mamba env create -n density -f {{ playbook_dir }}/files/density-env.yml -y
       creates: /home/max/.conda/envs/density/lib/python3.11/site-packages/ipykernel
 
+  - name: Register density env as Jupyter kernel
+    ansible.builtin.command:
+      cmd: >
+        ~/.conda/envs/density/bin/python -m ipykernel install --user --name density --display-name "Python (density)"
+      creates: "/home/max/.local/share/jupyter/kernels/density/kernel.json"
+
   - name: Create nmr conda env from spec
     become_user: max
     ansible.builtin.command:
       cmd: ~/.conda/bin/mamba env create -n nmr -f {{ playbook_dir }}/files/nmr-env.yml -y
       creates: /home/max/.conda/envs/nmr/lib/python3.11/site-packages/ipykernel
+
+  - name: Register nmr env as Jupyter kernel
+    ansible.builtin.command:
+      cmd: >
+        ~/.conda/envs/nmr/bin/python -m ipykernel install --user --name nmr --display-name "Python (nmr)"
+      creates: "/home/max/.local/share/jupyter/kernels/nmr/kernel.json"
