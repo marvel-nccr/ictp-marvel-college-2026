@@ -8,7 +8,12 @@ workon nmr
 
 ## 1. Background and context
 
-<TODO>: clean up this section.
+**NMR-driven structure determination** combines solid-state NMR measurements with computational
+crystal-structure prediction (CSP). Given a pool of candidate crystal structures, one
+identifies the experimentally observed polymorph by scoring each candidate against
+measured NMR data. This is especially valuable for organic pharmaceuticals: they are
+often obtained only as powders (ruling out single-crystal X-ray diffraction), and
+different polymorphs can have very different solubility and bioavailability.
 
 A solid-state NMR experiment on a powdered organic crystal reports a set of *chemical
 shifts* $\delta_i$ (ppm), one for each magnetically distinct nuclear site. Computationally,
@@ -52,18 +57,47 @@ measured solid-state $^1$H spectrum.
 
 The recipe [**"NMR-shielding-driven structure determination with
 ShiftML3"**](https://atomistic-cookbook.org/examples/shiftml-structure-match/shiftml-structure-match.html)
-<TODO>. The key ideas:
+works through the cocaine benchmark, identifying the correct polymorph from a pool of
+29 candidates using both GIPAW-DFT and ShiftML3 shieldings. The key ideas:
 
-<TODO>
+- **ShiftML3.** An ensemble of 8 PET models trained on GIPAW-level shieldings for
+  ~14 000 molecular crystals from the Cambridge Structural Database. It delivers
+  DFT-level accuracy for $^1$H structure matching in seconds per candidate — versus
+  hundreds of CPU-hours per GIPAW calculation.
+
+- **Shielding → shift calibration.** The model outputs shieldings $\sigma_i$; the
+  experiment reports shifts $\delta_i$. A linear calibration $\delta_i = a\sigma_i + b$
+  is needed. The slope is conventionally fixed at $a = -1$; the intercept can be fitted
+  per-structure (aligning predicted and experimental means, thereby comparing spectral
+  *patterns*) or globally (a single pair from a broad benchmark, preserving absolute
+  shift information).
+
+- **Structure matching by RMSE.** Each candidate is scored against the experimental
+  $^1$H spectrum; the one with the lowest RMSE is taken as the best match. The method
+  works because $^1$H shieldings are highly sensitive to local environments — different
+  polymorphs produce detectably different spectra.
+
+- **Noise floor.** Even for the correct structure a finite irreducible RMSE is expected
+  from DFT errors and the ML model's finite accuracy. Candidates whose RMSE falls
+  within this band (~$0.33 \pm 0.16$ ppm for PBE/GIPAW) are statistically
+  indistinguishable from experiment.
 
 
 👉 https://atomistic-cookbook.org/examples/shiftml-structure-match/shiftml-structure-match.html
 
-By the end you should have some ideas about these questions: <TODO>
+By the end you should have some ideas about these questions: *Why are $^1$H shieldings
+sensitive enough to distinguish crystal polymorphs? What are the trade-offs between
+per-structure and global calibration? What is the noise floor, and what does it mean
+practically if two candidates both fall within it?*
 
 ## 3. Exercise: comparing DFT-to-experimental calibration methods
 
-<TODO>
+In this exercise you will apply the NMR-crystallography workflow to **AZD8329**, a
+pharmaceutical compound. You have 10 candidate crystal structures with pre-computed
+GIPAW shieldings. You will run ShiftML3 inference on all candidates and compare three
+calibration strategies — per-structure intercept fitting, exclusion of the acidic
+proton, and global calibration — examining how each affects the ability to identify the
+correct polymorph.
 
 The following are the assigned shifts (in ppm) for the molecular crystal experimentally
 observed, for which we want to match the structure. You'll need these later.
@@ -91,31 +125,10 @@ observed, for which we want to match the structure. You'll need these later.
 }
 ```
 
-Later in the exercise, you'll need to identify the acidic proton in oredr to remove it
+Later in the exercise, you'll need to identify the acidic proton in order to remove it
 from the shift calibration. In normal organic molecules, this sits at 10-13 ppm, but can
 be higher at 15+ ppm if the environment is particularly deshielded (i.e. in the case of
 aromatic functional groups that withdraw electron density.)
-
-<TODO>: clean up the following section
-
-Eventually, you use a global calibration scheme with the following parameters, computed
-against experiment.
-
-The per-structure intercept fitting above adjusts $b$ separately for each candidate to
-align the mean predicted shift with the experimental mean. This is convenient but has
-a drawback: it *removes any information carried by the absolute offset*, which can vary
-between polymorphs due to differences in crystal packing.
-
-A better approach is to use a **global calibration** — a single $(a, b)$ pair fitted by
-linear regression of computed shieldings against experimental shifts across many molecular
-crystals. This accounts for systematic DFT functional errors (reflected in the slope
-$a \neq -1$) and reference-compound offset without discarding polymorph-specific
-information.
-
-The values below were obtained by fitting PBE/GIPAW shieldings against experimental
-$^1$H shifts for a diverse benchmark set:
-
-$$a = -0.9024 \qquad b = 28.05 \text{ ppm}$$
 
 ### Provided code
 
@@ -182,7 +195,11 @@ chemiscope.show(
 
 **(iv) Helper functions**
 
-<TODO>: explain briefly the function
+`assign_shieldings` picks one molecule's hydrogen shieldings from the unit cell (the
+unit cell may contain several symmetry-equivalent copies) and averages over
+symmetry-equivalent proton groups listed in `assigned_experimental_shifts`. For
+example, a freely-rotating methyl group contributes three H atoms that all map to a
+single observed NMR peak, so their predicted shieldings are averaged before comparison.
 
 ```python
 
@@ -200,7 +217,11 @@ def assign_shieldings(per_h_shieldings, assigned_experimental_shifts):
 
 ```
 
-<TODO>: explain briefly the function
+`calibrated_rmse` applies the linear calibration $\delta = a\sigma + b$ for each
+candidate and returns one RMSE against experiment per candidate. If no intercept is
+provided, it is fitted per-structure by matching the predicted and experimental shift
+*means* — this corrects for the unknown reference-compound offset while preserving
+the spectral pattern information.
 
 ```python
 
@@ -217,7 +238,11 @@ def calibrated_rmse(shieldings_per_candidate, experimental_shifts,
     return np.array(rmses)
 ```
 
-<TODO>: explain briefly the function
+`make_lollipop_plot` produces the standard visualisation for NMR crystallography:
+each candidate appears as a vertical lollipop whose height is its RMSE against
+experiment. GIPAW (blue) and ShiftML3 (orange) are shown side by side; the grey band
+marks the noise floor — candidates inside it are statistically indistinguishable from
+the correct structure.
 
 ```python
 
@@ -335,14 +360,29 @@ rmse_gipaw = calibrated_rmse(shieldings_gipaw[:, slice_idxs], experimental_shift
 make_lollipop_plot(frames, rmse_gipaw, rmse_sml)
 ```
 
-**(ix) Using an experimentally-calculated global calibration**
+**(ix) Using an experimentally-calibrated global calibration**
 
-<TODO>: explain
+The per-structure intercept fit above adjusts $b$ separately for each candidate to
+align the predicted mean shift with the experimental mean. This is convenient but
+discards information carried by the absolute offset, which can differ between
+polymorphs due to differences in crystal packing.
+
+A better approach is a **global calibration** — a single $(a, b)$ pair fitted once by
+linear regression of computed shieldings against experimental shifts across many
+molecular crystals. This corrects systematic DFT functional errors (slope $a \neq -1$)
+and removes the per-structure degree of freedom. The values below were obtained by
+fitting PBE/GIPAW shieldings against experimental $^1$H shifts for a diverse benchmark
+set:
+
+$$a = -0.9024 \qquad b = 28.05 \text{ ppm}$$
+
+With a global calibration the acidic proton can also be *included* again, because the
+calibration was not adjusted to match these particular structures.
 
 ```python
 # Define slope and intercept from given values
-slope     = ...
-intercept =  ...
+slope = ...  # TODO
+intercept = ...  # TODO
 
 # Compute RMSEs
 rmse_sml = calibrated_rmse(
@@ -364,7 +404,12 @@ Once you've finished the exercise, or while you go, think about these prompts an
 <details>
 <summary>💭 Why does the grey band in the plot represent?</summary>
 
-<TODO>: briefly explain.
+The grey band is the **noise floor**: the irreducible RMSE expected even for the
+correct crystal structure, arising from DFT functional errors, finite ShiftML3 model
+error, and the neglect of vibrational averaging in the static calculations. Candidates
+whose RMSE falls inside this band (here $0.33 \pm 0.16$ ppm, estimated from a broad
+benchmark of organic solids) are statistically indistinguishable from experiment —
+the measured spectrum alone cannot rule them out.
 
 </details>
 
@@ -372,9 +417,13 @@ Once you've finished the exercise, or while you go, think about these prompts an
 <details>
 <summary>💭 What would it mean if more than one candidate was within the noise floor?</summary>
 
-<TODO> In an ambiguous case, the lollipop plot only really helps *exclude* structures
-with high RMSE relatve to experiment. Further screening would be needed to distinguish
-between equally viable candidates.
+In an ambiguous case, the $^1$H isotropic RMSE alone cannot resolve the degeneracy — the
+lollipop plot can confidently *exclude* high-RMSE candidates but cannot choose between
+those inside the band. In practice one could then: include shieldings from additional
+nuclei (e.g. $^{13}$C, $^{15}$N); incorporate the full chemical shielding tensor
+(anisotropy); or collect additional experimental data. The key figure of merit for
+structure determination is an unambiguous unique minimum, not merely a low absolute
+RMSE.
 
 </details>
 
@@ -414,14 +463,19 @@ particular structures): the result uses all available experimental information.
 <details>
 <summary>💭 What methods could be used to model better the acidic protons?</summary>
 
-<TODO>
+Acidic (exchangeable) protons are particularly sensitive to nuclear quantum effects:
+tunnelling and zero-point delocalization shift the proton away from its classical
+equilibrium position, systematically moving the predicted resonance. Better treatments
+include:
+
+- **Path-integral MD.** Sampling the quantum nuclear distribution via ring-polymer
+  simulations captures vibrational averaging and proton delocalization, bringing
+  predicted shifts closer to experiment.
+- **Empirical corrections.** Fitting a separate calibration for exchangeable protons
+  using a benchmark of known acidic-proton shifts can reduce systematic errors at low
+  cost.
+- **Electronic structure improvements.** Hybrid functionals or dispersion corrections
+  applied during geometry relaxation improve the proton environment, which in turn
+  improves the predicted shielding.
 
 </details>
-
-
-
-## 5. Further reading
-
-The following papers, in chronological order, are good reads for density learning:
-
-1. <TODO>

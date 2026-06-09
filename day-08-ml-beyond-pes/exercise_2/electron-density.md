@@ -29,23 +29,51 @@ The recipe [**"ML surrogate for the electron density and derived properties"**](
 computes an SCF initial guess for an organic molecule with an ML surrogate model and
 uses it to speed up SCF. The key ideas:
 
-<TODO>
+- **Resolution-of-identity (RI) approximation.** Rather than working with the full
+  density matrix $D_{\mu\nu}$ (an $N_\text{ao}\times N_\text{ao}$ object), the density
+  is re-expanded on a smaller, atom-centred *auxiliary* basis $\{\chi_P\}$:
 
+  $$\tilde{\rho}(\mathbf{r}) = \sum_P c_P\,\chi_P(\mathbf{r})$$
+
+  The expansion coefficients $\{c_P\}$ are found by minimising the pointwise squared
+  error. The result is a compact, atom-centred, and systematically improvable
+  representation — attractive properties for a machine-learning target.
+
+- **ML model for the density.** A pretrained PET model maps atomic positions directly
+  to the RI coefficients $\{c_P\}$, predicting the full molecular electron density
+  without any self-consistent field calculation. Because the basis functions are
+  atom-centred, the model is naturally transferable to molecules not seen during
+  training.
+
+- **Accelerated SCF.** Given predicted coefficients, a single Fock-matrix build and
+  diagonalisation yields a density matrix $D_0$ already close to self-consistency.
+  The SCF then needs far fewer iterations than when starting from SAD.
+
+- **Downstream properties.** Electronic observables that are linear functionals of the
+  density — such as the dipole moment — can be evaluated directly from $\tilde{\rho}$
+  without running any SCF at all. The quality depends on how closely $\tilde{\rho}$
+  approximates the true ground-state density.
 
 👉 https://atomistic-cookbook.org/examples/ml-density/ml-density.html
 
-By the end you should have some ideas about these questions: <TODO>
+By the end you should have some ideas about these questions: *What is the RI
+approximation and why are the coefficients $\{c_P\}$ a natural ML target? Why does the
+SAD initial guess work at all, and in which situations is it worst? How does the ML
+density compare to SAD?*
 
-## 3. Exercise: accelerating SCF convergence with ML intial guesses
+## 3. Exercise: accelerating SCF convergence with ML initial guesses
 
-<TODO>
+In this exercise you will apply an ML density model to a small set of organic molecules
+and measure the reduction in SCF iterations compared to the SAD baseline. The workflow
+mirrors the cookbook recipe but runs on a batch of molecules so you can see how the
+speedup varies with the system.
 
-1. Load a set of 10 small organic molecules.
+1. Load a set of 5 small organic molecules from the SCFBench dataset.
 2. Visualise them with chemiscope and choose your favourite.
 3. For your chosen molecule, compare the number of SCF iterations needed with:
    - the SAD initial guess (default)
    - the ML-predicted density as the initial guess
-4. Repeat for 9 more organic molecules and plot the results.
+4. Repeat for the rest and plot the results.
 
 ### Provided code
 
@@ -98,7 +126,7 @@ for i, f in enumerate(frames):
 Visualise with `chemiscope`:
 
 ```python
-chemiscope.show(frames, mode="default")
+chemiscope.show(frames, mode="structure")
 ```
 
 **(v) Choose one molecule and run SCF**
@@ -123,8 +151,9 @@ mf_sad = dft.RKS(mol)
 mf_sad.xc = XC
 dm_sad = mf_sad.get_init_guess()   # superposition of atomic densities
 
+t0 = time.time()
 _, n_sad = run_scf(atoms, XC, BASIS, dm0=dm_sad)
-print(f"SAD initial guess → {n_sad} SCF cycles")
+print(f"SAD initial guess → {n_sad} SCF cycles in {time.time() - t0} s")
 ```
 
 ML initial guess:
@@ -137,45 +166,57 @@ ml_coefficients = calculator.run_model(
 dm_ml  = dm_from_ri_coefficients(atoms, ml_coefficients, XC, BASIS, AUXBASIS)
 
 # Run SCF
+t0 = time.time()
 _, n_ml = run_scf(atoms, XC, BASIS, dm0=dm_ml)
-print(f"ML initial guess  → {n_ml} SCF cycles")
-print(f"Speedup: {n_sad / n_ml:.1f}x fewer iterations")
+print(f"ML initial guess  → {n_ml} SCF cycles in {time.time() - t0} s")
+print(f"Speedup: {(n_ml / n_sad) * 100:.1f} of the SAD iterations")
 ```
 The function `dm_from_ri_coefficients` is required to convert the
 RI coefficients to the density matrix. If you are curious, open file `rho_utils.py` and
 inspect this function to see how it works.
 
 
-**(vii) Repeat for all 10 molecules**
+**(vii) Repeat for all 5 molecules**
 
 
-If you have time, repeat the comparison for all 10 molecules and plot the result.
+Repeat the comparison for all 5 molecules and plot the result. What do you notice about
+the reported wall times?
 
 
 ```python
-names  = [f.get_chemical_formula() for f in frames]
 n_sads, n_mls = [], []
-
 for atoms_i in frames:
+
+    print("Molecule:", atoms_i.get_chemical_formula())
     mol_i  = atoms_to_pyscf(atoms_i, BASIS)
     mf_i   = dft.RKS(mol_i); mf_i.xc = XC
     dm_sad_i = mf_i.get_init_guess()
-    _, ns = run_scf(atoms_i, XC, BASIS, dm0=dm_sad_i)
 
+    t0 = time.time()
+    _, ns = run_scf(atoms_i, XC, BASIS, dm0=dm_sad_i)
+    print(f"   SAD initial guess → {n_sad} SCF cycles in {time.time() - t0} s")
+
+
+    t0 = time.time()
     ml_coeff_i = calculator.run_model(
         atoms_i, {TARGET_NAME: ModelOutput(per_atom=True)}
     )[TARGET_NAME]
     dm_ml_i = dm_from_ri_coefficients(atoms_i, ml_coeff_i, XC, BASIS, AUXBASIS)
     _, nm = run_scf(atoms_i, XC, BASIS, dm0=dm_ml_i)
+    print(f"   ML initial guess  → {n_ml} SCF cycles in {time.time() - t0} s")
 
     n_sads.append(ns); n_mls.append(nm)
+```
 
+and plot the results:
+```python
 # Plot results
+names  = [f.get_chemical_formula() for f in frames]
 x = np.arange(len(names))
 fig, ax = plt.subplots(figsize=(10, 4), constrained_layout=True)
 ax.bar(
     x - 0.2,
-    ...,  # TODO
+    ...,  # TODO: replace with your list of SAD iteration counts
     0.4,
     label="SAD",
     color="C7",
@@ -183,7 +224,7 @@ ax.bar(
 )
 ax.bar(
     x + 0.2,
-    ...,  # TODO
+    ...,  # TODO: replace with your list of ML iteration counts
     0.4,
     label="ML guess",
     color="C1",
@@ -218,14 +259,26 @@ benefit of an ML initial guess in most pronounced.
 <details>
 <summary>💭 Beyond the number of SCF cycles saved, what impacts whether the actual wall time of the SCF calculation is decreased?</summary>
 
-<TODO> Mention: model inference (model size and auxiliary basis size dependent), Fock
-construction and diagonalization, integrating Ml codes with DFT codes!
+The raw iteration count is only one factor. The actual wall-time speedup also depends on:
+
+- **Model inference cost.** Evaluating the ML model on the given geometry takes time
+  that grows with model size and auxiliary basis size. For small molecules the saving of
+  cycles may not be benficial.
+- **Per-iteration cost.** Each SCF step involves Fock matrix construction and a
+  diagonalisation (scaling as $\mathcal{O}(N^3)$ in the basis size). Saving even one
+  or two iterations is worth more for large, expensive systems.
+- **Software integration overhead.** Passing data between the ML framework and the DFT
+  code introduces latency that does not appear in the raw iteration count.
+
+In practice the ML initial guess pays off most clearly for larger molecules, where
+each SCF cycle is expensive and the model inference cost is a small fraction of the
+total.
 
 </details>
 
 
 <details>
-<summary>💭 Instead of going through the denisty matrix, could you compute, for example, the dipole moment directly from the predicted coefficients? </summary>
+<summary>💭 Instead of going through the density matrix, could you compute, for example, the dipole moment directly from the predicted coefficients? </summary>
 
 Given the predicted RI coefficients, the electric dipole moment can be computed
 **directly** — without constructing a density matrix or running any SCF diagonalisation:
@@ -234,17 +287,21 @@ $$\boldsymbol{\mu} = \underbrace{\sum_i Z_i\, \mathbf{R}_i}_{\text{nuclear}} \;-
 
 The nuclear term is a simple weighted sum of atomic positions. The electronic term
 requires the first spatial moment $\int \mathrm{d}^3r\; \chi_P(\mathbf{r})\, \mathbf{r}$
-for each auxiliary function — a three-component vector that is evaluated numerically
-on a quadrature grid.
-
-<TODO> Finish: what lack of mathematical constraints might make this not as effective as
-going through the density matrix?
+for each auxiliary function — a three-component vector evaluated numerically on a
+quadrature grid.
 
 </details>
 
+<details>
+<summary>💭 What lack of mathematical contraints might make this not as effective as going through the density matrix? </summary>
 
-## 5. Further reading
+However, the predicted density $\tilde{\rho}$ satisfies no strict mathematical
+constraints: it is not guaranteed to integrate to the correct number of electrons
+(particle-number conservation), nor to be $N$-representable. Errors in $\tilde{\rho}$
+propagate directly into the dipole without any self-correcting mechanism. Going through
+a density matrix — via one Fock diagonalisation, as `dm_from_ri_coefficients` does —
+enforces the correct electron count and a physical density, typically improving the
+accuracy of derived properties at the additional cost of a diagonalization.
 
-The following papers, in chronological order, are good reads for density learning:
+</details>
 
-1. <TODO>
