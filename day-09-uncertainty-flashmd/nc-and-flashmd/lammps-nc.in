@@ -1,0 +1,31 @@
+units metal
+
+atom_style atomic
+read_data water.data
+
+pair_style metatomic pet-mad-s-v1.5.0.pt device cpu non_conservative on
+pair_coeff * * 8 1
+
+neighbor 2.0 bin
+neigh_modify one 100000 page 1000000 binsize 5.5
+
+run_style verlet
+timestep 0.0005
+
+thermo 1
+variable time_fs equal 1000*time
+thermo_style custom v_time_fs temp pe ke etotal cpu
+thermo_modify colname 1 "Time (fs)"
+thermo_modify colname 2 "T (K)"
+thermo_modify colname 3 "V (eV)"
+thermo_modify colname 4 "K (eV)"
+thermo_modify colname 5 "E (eV)"
+thermo_modify colname 6 "CPU Time (s)"
+
+velocity all create 300.0 12345 mom yes rot yes dist gaussian
+fix integration all nve
+
+dump trajectory all custom 1 non-conservative.lammpstrj id type element x y z
+dump_modify trajectory sort id element O H
+
+run 128
