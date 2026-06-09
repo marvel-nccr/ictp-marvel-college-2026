@@ -10,8 +10,8 @@ workon density
 
 
 Kohn-Sham DFT finds the ground-state electron density by iteratively diagonalising the
-Fock matrix $F[D] = h + V_J[D] + V_{xc}[D]$ until self-consistency. Each iteration
-is expensive, so the fewer cycles needed the better.
+Fock matrix $F[D] = h + V_J[D] + V_{xc}[D]$ until self-consistency. Each iteration is
+expensive, so the fewer cycles needed the better.
 
 The default starting point in most codes — including PySCF — is the **superposition of
 atomic densities** (SAD): pre-computed atomic density matrices are stacked
@@ -22,6 +22,13 @@ A pretrained ML model predicts the RI expansion coefficients $\{c_P\}$ of the fu
 molecular electron density directly from the atomic positions. Converting these to a
 density matrix and using it as the initial guess starts the SCF much closer to the
 solution, reducing the number of iterations to convergence.
+
+The architecture of choice that forms the ML surrogate model for the electron density in
+this example is PET, an unconstrained transformer-based GNN. PET does not enforce
+roto-equivariance at the level of its architecture, instead learning it via data
+augmentation. Predictions of equivariant quantities -- in this case the electron density
+coefficients -- are thus only approximately equivariant, though with sufficient training
+time PET can learn equivariance to a small error.
 
 ## 2. Reading material
 
@@ -61,6 +68,10 @@ approximation and why are the coefficients $\{c_P\}$ a natural ML target? Why do
 SAD initial guess work at all, and in which situations is it worst? How does the ML
 density compare to SAD?*
 
+This exercise comes in two (optional) parts: a) accelerating SCF convergence with an ML
+initial guess, and b) investigating the approximate equivariance of derived energy
+predictions.
+
 ## 3a. Exercise: accelerating SCF convergence with ML initial guesses
 
 In this exercise you will apply an ML density model to a small set of organic molecules
@@ -74,6 +85,11 @@ speedup varies with the system.
    - the SAD initial guess (default)
    - the ML-predicted density as the initial guess
 4. Repeat for the rest and plot the results.
+5. [Bonus] If your virtual machine is running smoothly and is fast, you can repeat the
+   exercise for some larger organic molecules (stored in `molecules_larger.xyz`). While
+   this should run relatively fast on a personal laptop, significant slowdowns in
+   running DFT with PySCF on the virtual machines may be exhibited. Proceed with
+   caution!
 
 ### Provided code
 
@@ -240,7 +256,7 @@ ax.spines[["top","right"]].set_visible(False)
 
 ## 3b. Exercise: investigating approximate equivariance
 
-In this exercise you will use the pretrained ML model to predict the density, and from
+In this part you will use the pretrained ML model to predict the density, and from
 the resulting density matrix compute the zero-shot total energy. This will be performed
 for 10 rotated copies of a water molecule.
 
@@ -391,8 +407,8 @@ for R, angle in zip(rotation_matrices, angles_deg):
 
 energies_sad = np.array(energies_sad)
 energies_ml  = np.array(energies_ml)
-print(f"\nSAD energy spread : {(energies_sad.max() - energies_sad.min()) * 1e3:.4f} mHa")
-print(f"ML  energy spread : {(energies_ml.max()  - energies_ml.min())  * 1e3:.4f} mHa")
+print(f"\nSAD energy std : {(energies_sad.std()) * 1e3:.4f} mHa")
+print(f"ML  energy std : {(energies_ml.std())  * 1e3:.4f} mHa")
 ```
 
 **(vii) Plot.**
@@ -401,10 +417,24 @@ Both curves are shown relative to their own mean so they share the same axis sca
 
 ```python
 fig, ax = plt.subplots(figsize=(7, 4), constrained_layout=True, dpi=120)
-ax.plot(angles_deg, (energies_sad - energies_sad.mean()) * 1e3,
-        "s-", color="C7", lw=2, ms=7, label="SAD")
-ax.plot(angles_deg, (energies_ml  - energies_ml.mean())  * 1e3,
-        "o-", color="C1", lw=2, ms=7, label="ML")
+ax.plot(
+    angles_deg,
+    (energies_sad - energies_sad.mean()) * 1e3,
+    "s-",
+    color="C7",
+    lw=2,
+    ms=7,
+    label="SAD"
+)
+ax.plot(
+    angles_deg,
+    (energies_ml  - energies_ml.mean())  * 1e3,
+    "o-", 
+    color="C1", 
+    lw=2, 
+    ms=7, 
+    label="ML"
+)
 ax.axhline(0, color="0.5", lw=0.8, ls="--")
 ax.set_xlabel("Rotation angle / degrees")
 ax.set_ylabel(r"$E - \langle E \rangle$ / mHa")
