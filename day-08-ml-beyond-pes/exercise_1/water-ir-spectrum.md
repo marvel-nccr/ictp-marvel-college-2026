@@ -31,7 +31,11 @@ computes the IR spectrum of *liquid water* from molecular dynamics (MD). The key
 - **Linear response theory and Green-Kubo formula.** The IR lineshape is proportional to the
   Fourier transform of the equilibrium **dipole–dipole autocorrelation function**,
 
-  $$ n(\omega)\,\alpha(\omega)\ \propto\ \omega^2 \int \langle\,\boldsymbol{\mu}(0)\cdot \boldsymbol{\mu}(t)\,\rangle\, e^{-i\omega t}\,dt , $$
+  $$ 
+  n(\omega)\,\alpha(\omega)\ \propto\ \omega^2 \int
+  \langle\,\boldsymbol{\mu}(0)\cdot \boldsymbol{\mu}(t)\,\rangle\, e^{-i\omega
+  t}\,dt , 
+  $$
 
   where $n(\omega)$ In practice you run dynamics collecting the total dipole
   **μ(t)**, and take its power spectrum. Anharmonicity, mode coupling,
