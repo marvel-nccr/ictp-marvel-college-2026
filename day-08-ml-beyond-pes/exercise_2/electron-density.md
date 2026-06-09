@@ -61,7 +61,7 @@ approximation and why are the coefficients $\{c_P\}$ a natural ML target? Why do
 SAD initial guess work at all, and in which situations is it worst? How does the ML
 density compare to SAD?*
 
-## 3. Exercise: accelerating SCF convergence with ML initial guesses
+## 3a. Exercise: accelerating SCF convergence with ML initial guesses
 
 In this exercise you will apply an ML density model to a small set of organic molecules
 and measure the reduction in SCF iterations compared to the SAD baseline. The workflow
@@ -238,9 +238,188 @@ ax.legend()
 ax.spines[["top","right"]].set_visible(False)
 ```
 
+## 3b. Exercise: investigating approximate equivariance
+
+In this exercise you will use the pretrained ML model to predict the density, and from
+the resulting density matrix compute the zero-shot total energy. This will be performed
+for 10 rotated copies of a water molecule.
+
+A physical density model must be **rotationally equivariant**: rotating the input
+coordinates should rotate the predicted density in the same way, so that
+rotation-invariant quantities such as the total energy come out identical regardless of
+orientation.
+
+The ML surrogate model you have been using in this exercise (PET) is unconstrained to
+roto-equivariance on the architectural level, instead learning it implicitly through
+data augmentation. Therefore, any equivariant quantities predicted by the model will
+only be approximately equivariant. This also affects derived quantities such as the
+total energy: physically speaking, the total energy of an isolated system is invariant
+under rotations. However, as the density coefficients predicted by PET are only
+approximately equivariant, the resulting total energy will be only approximately
+invariant.
+
+In this exercise 
+
+Here you will measure the residual numerical error by computing the no-SCF DFT energy —
+the energy functional $E[\tilde\rho]$ evaluated at the ML-predicted density — for 10
+different orientations of a water molecule and checking how much it varies.
+
+### Provided code
+
+**(i) Additional import.**
+
+```python
+import ase
+from scipy.spatial.transform import Rotation
+```
+
+**(ii) Build a water molecule with `ase.Atoms`.**
+
+```python
+d_OH  = 0.9584                         # O–H bond length, Å
+theta = np.deg2rad(104.45 / 2)         # half the H–O–H angle
+
+water = ase.Atoms(
+    symbols  = ["O", "H", "H"],
+    positions= [
+        [ 0.0,  0.0,                    0.0                   ],
+        [ 0.0,  d_OH * np.sin(theta),  -d_OH * np.cos(theta)  ],
+        [ 0.0, -d_OH * np.sin(theta),  -d_OH * np.cos(theta)  ],
+    ],
+)
+water.positions -= water.get_center_of_mass()   # centre at origin
+```
+
+**(iii) Helper: evaluate total DFT energy at a given density matrix (no SCF).**
+
+```python
+def energy_from_dm(atoms, dm, xc, basis):
+    """Total DFT energy E[D] without any SCF iteration."""
+    mol        = atoms_to_pyscf(atoms, basis)
+    mf         = dft.RKS(mol)
+    mf.xc      = xc
+    mf.verbose = 0
+    return mf.energy_tot(dm=dm)
+```
+
+**(iv) Zero-shot energy comparison.**
+
+Before looking at rotations, compute the no-SCF energy from the SAD and ML initial
+density matrices for the original molecule and compare both to the converged SCF
+energy. This tells you how close each initial guess sits to the true ground state in
+terms of energy prediction.
+
+After this, for the rotational analysis, we will only look at the deviations of the
+rotation-dependent energies against the mean for each initial guess separately. This
+will help us decouple the accuracy of the energy from its rotational dependence.
+
+```python
+# SAD initial guess for the original molecule
+mol_ref  = atoms_to_pyscf(water, BASIS)
+mf_ref   = dft.RKS(mol_ref)
+mf_ref.xc = XC
+mf_ref.verbose = 0
+dm_sad_ref = mf_ref.get_init_guess()
+
+# ML prediction for the original molecule
+ml_coeff_ref = calculator.run_model(
+    water, {TARGET_NAME: ModelOutput(per_atom=True)}
+)[TARGET_NAME]
+dm_ml_ref = dm_from_ri_coefficients(water, ml_coeff_ref, XC, BASIS, AUXBASIS)
+
+# Converged SCF energy (reference)
+mf_conv, _ = run_scf(water, XC, BASIS, dm0=dm_sad_ref)
+e_conv = mf_conv.e_tot
+
+# No-SCF energies
+e_sad_ref = energy_from_dm(water, dm_sad_ref, XC, BASIS)
+e_ml_ref  = energy_from_dm(water, dm_ml_ref,  XC, BASIS)
+
+print(f"Converged SCF energy : {e_conv:.6f} Ha  (reference)")
+print(f"SAD zero-shot energy : {e_sad_ref:.6f} Ha  (error = {(e_sad_ref - e_conv)*1e3:+.2f} mHa)")
+print(f"ML  zero-shot energy : {e_ml_ref:.6f} Ha  (error = {(e_ml_ref  - e_conv)*1e3:+.2f} mHa)")
+```
+
+**(v) Define 10 rotation matrices.**
+
+We generate 10 Cartesian rotation matrices evenly spaced from 0° to 360° around a
+general axis (not aligned with any molecular symmetry element).
+
+```python
+angles_deg = np.linspace(0, 360, 11)[:-1]   # 0°, 36°, 72°, …, 324°
+
+axis = np.array([1.0, 1.0, 0.5])
+axis /= np.linalg.norm(axis)                 # normalise
+
+rotation_matrices = [
+    Rotation.from_rotvec(np.deg2rad(a) * axis).as_matrix()
+    for a in angles_deg
+]
+```
+
+**(vi) Loop over rotations — compute no-SCF energies for SAD and ML.**
+
+For each rotated geometry we evaluate the no-SCF energy for both the SAD and the ML
+initial density matrix.
+
+```python
+energies_sad = []
+energies_ml  = []
+
+for R, angle in zip(rotation_matrices, angles_deg):
+    atoms_rot = water.copy()
+    atoms_rot.set_positions(atoms_rot.get_positions() @ R.T)
+
+    # SAD initial guess for this rotation
+    mol_rot        = atoms_to_pyscf(atoms_rot, BASIS)
+    mf_rot         = dft.RKS(mol_rot)
+    mf_rot.xc      = XC
+    mf_rot.verbose = 0
+    dm_sad_rot     = mf_rot.get_init_guess()
+
+    # ML prediction for this rotation
+    ml_coefficients = calculator.run_model(
+        atoms_rot, {TARGET_NAME: ModelOutput(per_atom=True)}
+    )[TARGET_NAME]
+    dm_ml_rot = dm_from_ri_coefficients(atoms_rot, ml_coefficients, XC, BASIS, AUXBASIS)
+
+    e_sad = energy_from_dm(atoms_rot, dm_sad_rot, XC, BASIS)
+    e_ml  = energy_from_dm(atoms_rot, dm_ml_rot,  XC, BASIS)
+    energies_sad.append(e_sad)
+    energies_ml.append(e_ml)
+    print(f"  θ = {angle:6.1f}°  →  E_SAD = {e_sad:.6f}  E_ML = {e_ml:.6f} Ha")
+
+energies_sad = np.array(energies_sad)
+energies_ml  = np.array(energies_ml)
+print(f"\nSAD energy spread : {(energies_sad.max() - energies_sad.min()) * 1e3:.4f} mHa")
+print(f"ML  energy spread : {(energies_ml.max()  - energies_ml.min())  * 1e3:.4f} mHa")
+```
+
+**(vii) Plot.**
+
+Both curves are shown relative to their own mean so they share the same axis scale.
+
+```python
+fig, ax = plt.subplots(figsize=(7, 4), constrained_layout=True, dpi=120)
+ax.plot(angles_deg, (energies_sad - energies_sad.mean()) * 1e3,
+        "s-", color="C7", lw=2, ms=7, label="SAD")
+ax.plot(angles_deg, (energies_ml  - energies_ml.mean())  * 1e3,
+        "o-", color="C1", lw=2, ms=7, label="ML")
+ax.axhline(0, color="0.5", lw=0.8, ls="--")
+ax.set_xlabel("Rotation angle / degrees")
+ax.set_ylabel(r"$E - \langle E \rangle$ / mHa")
+ax.set_title("Equivariance test: no-SCF energy vs rotation")
+ax.legend(frameon=False)
+ax.spines[["top", "right"]].set_visible(False)
+```
+
+
 ## 4. Discussion points
 
-Once you've finished the exercise, or while you go, think about these prompts and discuss with your neighbor.
+Once you've finished the exercise, or while you go, think about these prompts and
+discuss with your neighbor.
+
+### SCF acceleration
 
 <details>
 <summary>💭 Why does the ML guess help?</summary>
@@ -303,5 +482,43 @@ a density matrix — via one Fock diagonalisation, as `dm_from_ri_coefficients` 
 enforces the correct electron count and a physical density, typically improving the
 accuracy of derived properties at the additional cost of a diagonalization.
 
+### Approximate equivariance
+
 </details>
 
+<details>
+<summary>💭 Why do you expect the energy deviations as a function of rotation curve for the SAD guess to be flat? Why is it not? </summary>
+
+They should be by construction, as the atomic densities are speherically symmetric and
+thus invariant to rotations. However in practice this isn't exactly the case, due to
+numerics and perhaps the "egg box" problem, where the discretization of the DFT grids
+plays a role.
+
+</details>
+
+
+<details>
+<summary>💭 What would you expect the deviations curves to look like if you used an equivariant architecture, such as MACE? </summary>
+
+One would expect that they should be a lot flatter, as the predicted coefficients would
+transform equivariantly under rotation of the system, by design.
+
+</details>
+
+
+<details>
+<summary>💭 Computing the standard deviation of the derived energies as a function of rotation is fairly straightforward. How could you assess the 'equivariance error' of the coefficients themselves? </summary>
+
+<TODO>: One would need to back-transform the predictions on the rotated systems to the
+original reference frame. As the density coefficients are defined on a basis of
+spherical harmonics, one would need to use Wigner-D matrices for these rotations. For
+accurate metrics, one would need to evaluate the model on a sufficiently converged
+quadrature that samples the O(3) group, too.
+
+For more details on equivariance and how unconstrained models learn them, read our
+paper:
+
+"How unconstrained machine learning models learn physical symmetries", M. Domina,
+J.W. Abbott, P. Pegolo, F. Bigi, M. Ceriotti, https://arxiv.org/pdf/2603.24638
+
+</details>
