@@ -214,6 +214,7 @@
       creates: /home/max/.conda/envs/nmr/lib/python3.11/site-packages/ipykernel
 
   - name: Register nmr env as Jupyter kernel
+    become_user: max
     ansible.builtin.command:
       cmd: >
         ~/.conda/envs/nmr/bin/python -m ipykernel install --user --name nmr --display-name "Python (nmr)"
