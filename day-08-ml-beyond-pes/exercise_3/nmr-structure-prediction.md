@@ -3,6 +3,8 @@
 Activate the environment for this exercise:
 
 ```bash
+cdd 08
+cd exercise_3
 workon nmr
 ```
 
@@ -281,7 +283,7 @@ Complete the dict with the assigned experimental shifts provided earlier.
 assigned_experimental_shifts = OrderedDict({
     "1":             6.92,
     "2":             8.69,
-    ...,  # TODO
+    ...,  # TODO: copy the rest of the experimental shieldings here
 })
 ```
 

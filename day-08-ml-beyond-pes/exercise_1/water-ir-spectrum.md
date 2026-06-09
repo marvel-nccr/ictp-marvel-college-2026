@@ -3,6 +3,8 @@
 Activate the environment for this exercise:
 
 ```bash
+cdd 08
+cd exercise_1
 workon metatomic
 ```
 

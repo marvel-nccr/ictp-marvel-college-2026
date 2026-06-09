@@ -1,9 +1,11 @@
-# Accelerating SCF convergence with an ML density guess
+# Accelerating SCF convergence with an ML surrogate for the electron density
 
 Activate the environment for this exercise:
 
 ```bash
-workon density
+cdd 08
+cd exercise_2
+workon metatomic
 ```
 
 ## 1. Background and context
