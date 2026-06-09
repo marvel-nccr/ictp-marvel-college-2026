@@ -30,11 +30,12 @@ reference compound, hence the sign), and the intercept $b$ encodes the reference
 shielding. Both constants depend on the level of theory.
 
 Given a candidate crystal structure $X$, we predict shieldings $\{\sigma_i(X)\}$,
-calibrate them to shifts, and compute the root-mean-square error against the experimental
-spectrum:
+for $N$ atoms in the structure calibrate them to shifts, 
+and compute the root-mean-square error against the experimental
+spectrum for each structure:
 
-$$\mathrm{RMSE}(X) = \sqrt{\frac{1}{N}\sum_{i=1}^{N}\!\left(\delta_i^{\mathrm{pred}}(X)
-- \delta_i^{\mathrm{exp}}\right)^{2}}$$
+$$\mathrm{RMSE}(X) = \sqrt{\frac{1}{N}\sum_{i=1}^{N}\!\left(\delta_i^{\mathrm{pred}}(X)\
+-\delta_i^{\mathrm{exp}}\right)^{2}}$$
 
 The structure with the **lowest RMSE** is the best match. This works because the isotropic
 chemical shielding at each nucleus is highly sensitive to its local crystal environment,
