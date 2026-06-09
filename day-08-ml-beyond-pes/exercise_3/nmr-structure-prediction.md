@@ -330,8 +330,11 @@ make_lollipop_plot(frames, rmse_gipaw, rmse_sml)
 **(viii) Excluding the acidic proton**
 
 
-As acidic protons are well captured at this DFT level, in absence of a proper global
-calibration it may be useful to exclude acidic protons too.
+In absence of a proper global
+calibration and especially without proper finite temperature sampling
+it may be useful to exclude acidic protons from the RMSE computation. After all due to 
+broadining effects it might even be difficult to determine the shift value experimentally
+with sufficient accuracy.
 
 The variable `acidic_proton_key` below gives the key in `assigned_experimental_shifts`
 corresponding to the acidic proton. Using the information given to you above, identify
@@ -376,8 +379,9 @@ set:
 
 $$a = -0.9024 \qquad b = 28.05 \text{ ppm}$$
 
-With a global calibration the acidic proton can also be *included* again, because the
-calibration was not adjusted to match these particular structures.
+With a global calibration the acidic proton can also be *included* again, given
+that in practice the slope corrects strongly for finite temperature effects in
+the computed shielding values of hydrogen-bonded and acidic protons.
 
 ```python
 # Define slope and intercept from given values
@@ -399,10 +403,10 @@ make_lollipop_plot(frames, rmse_gipaw, rmse_sml)
 
 ## 4. Discussion points
 
-Once you've finished the exercise, or while you go, think about these prompts and discuss with your neighbor.
+Once you've finished the exercise, or while you go, think about these questions and discuss with your neighbor.
 
 <details>
-<summary>💭 Why does the grey band in the plot represent?</summary>
+<summary> Why does the grey band in the plot represent?</summary>
 
 The grey band is the **noise floor**: the irreducible RMSE expected even for the
 correct crystal structure, arising from DFT functional errors, finite ShiftML3 model
@@ -415,7 +419,7 @@ the measured spectrum alone cannot rule them out.
 
 
 <details>
-<summary>💭 What would it mean if more than one candidate was within the noise floor?</summary>
+<summary> What would it mean if more than one candidate was within the noise floor?</summary>
 
 In an ambiguous case, the $^1$H isotropic RMSE alone cannot resolve the degeneracy — the
 lollipop plot can confidently *exclude* high-RMSE candidates but cannot choose between
@@ -428,7 +432,7 @@ RMSE.
 </details>
 
 <details>
-<summary>💭 What changed when we excluded the acidic proton and why?</summary>
+<summary> What changed when we excluded the acidic proton and why?</summary>
 
 After excluding the acidic proton the calibration fits the bulk of the spectrum much
 more accurately, pulling the RMSE values down toward (or into) the noise floor.
@@ -444,24 +448,22 @@ sits precisely inside the grey band.
 
 
 <details>
-<summary>💭 Why does the global calibration help?</summary>
+<summary> Why does the global calibration help?</summary>
 
 The per-structure intercept fit assumes $a = -1$ exactly. In practice, PBE/GIPAW
 systematically underestimates electron density in certain chemical environments,
-giving a slope slightly different from $-1$. The global calibration corrects this
-with a slope of $-0.9024$, which better captures the true shielding-to-shift relationship
-across diverse chemical environments. The fixed intercept also removes the freedom
-that was inadvertently masking polymorph-specific offsets.
-
-In addition, with the global calibration the acidic proton peak can be *included* again
-(it is no longer a special case because the calibration was not fitted to these
-particular structures): the result uses all available experimental information.
+giving a slope slightly different from $-1$. Furthermore, the slopes have been determined
+on static 0 K structures, neglecting quantum-nuclear effects (delocalizations of the protons)
+and generally finite temperature effects.
+The global calibration corrects this with a slope of $-0.9024$, 
+which better captures the true shielding-to-shift relationship
+across diverse chemical environments. 
 
 </details>
 
 
 <details>
-<summary>💭 What methods could be used to model better the acidic protons?</summary>
+<summary> What methods could be used to model better the acidic protons?</summary>
 
 Acidic (exchangeable) protons are particularly sensitive to nuclear quantum effects:
 tunnelling and zero-point delocalization shift the proton away from its classical
@@ -474,8 +476,10 @@ include:
 - **Empirical corrections.** Fitting a separate calibration for exchangeable protons
   using a benchmark of known acidic-proton shifts can reduce systematic errors at low
   cost.
-- **Electronic structure improvements.** Hybrid functionals or dispersion corrections
-  applied during geometry relaxation improve the proton environment, which in turn
-  improves the predicted shielding.
+- **Electronic structure improvements.** GGA DFT functionals tend to overstabilize 
+  the localization of protons, why in reality fractional protonation states (smeared out
+  proton positions) are observed. Hybrid DFT might be required to accurately describe
+  bond breaking events and hence structural ensembles generated at this level of theory
+  and the average shieldings predicted from it, might improve overall prediction accuracy.
 
 </details>
