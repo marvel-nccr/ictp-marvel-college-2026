@@ -10,4 +10,5 @@ dependencies:
     - numpy
     - scikit-learn >=1.4
     - shiftml ==0.1.1
+    - tqdm
     - ipykernel
