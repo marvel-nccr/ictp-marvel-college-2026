@@ -191,3 +191,30 @@
       version: main
       single_branch: true
       force: true
+
+  - name: Check installed pyscf version in the metatomic conda env
+    become_user: max
+    ansible.builtin.command:
+      cmd: ~/.conda/envs/metatomic/bin/pip show pyscf
+    register: pyscf_show
+    changed_when: false
+    failed_when: false
+
+  - name: Install pyscf 2.13.1 into the metatomic conda env
+    become_user: max
+    ansible.builtin.command:
+      cmd: ~/.conda/envs/metatomic/bin/pip install pyscf==2.13.1
+    when: "'Version: 2.13.1' not in pyscf_show.stdout"
+    changed_when: true
+
+  - name: Create nmr conda env from spec
+    become_user: max
+    ansible.builtin.command:
+      cmd: ~/.conda/bin/mamba env create -n nmr -f {{ playbook_dir }}/files/nmr-env.yml -y
+      creates: /home/max/.conda/envs/nmr/lib/python3.11/site-packages/ipykernel
+
+  - name: Register nmr env as Jupyter kernel
+    ansible.builtin.command:
+      cmd: >
+        ~/.conda/envs/nmr/bin/python -m ipykernel install --user --name nmr --display-name "Python (nmr)"
+      creates: "/home/max/.local/share/jupyter/kernels/nmr/kernel.json"
