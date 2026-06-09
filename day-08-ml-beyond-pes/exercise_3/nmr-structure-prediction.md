@@ -30,16 +30,16 @@ reference compound, hence the sign), and the intercept $b$ encodes the reference
 shielding. Both constants depend on the level of theory.
 
 Given a candidate crystal structure $X$, we predict shieldings $\{\sigma_i(X)\}$,
-for $N$ atoms in the structure calibrate them to shifts, 
+for $N$ atoms in the structure, calibrate them to shifts, 
 and compute the root-mean-square error against the experimental
 spectrum for each structure:
 
-$$\mathrm{RMSE}(X) = \sqrt{\frac{1}{N}\sum_{i=1}^{N}\!\left(\delta_i^{\mathrm{pred}}(X)\
+$$\mathrm{RMSE}(X) = \sqrt{\frac{1}{N}\sum_{i=1}^{N}\left(\delta_i^{\mathrm{pred}}(X)\
 -\delta_i^{\mathrm{exp}}\right)^{2}}$$
 
 The structure with the **lowest RMSE** is the best match. This works because the isotropic
 chemical shielding at each nucleus is highly sensitive to its local crystal environment,
-so different polymorphs produce measurably different $^1$H spectra.
+so different polymorphs produce measurably different <sup>1</sup>H spectra.
 
 ### The noise floor
 
@@ -53,7 +53,7 @@ Even for the *correct* structure, a finite RMSE is expected due to:
 The dataset contains 10 candidate crystal structures of a pharmaceutical compound, each
 with pre-computed GIPAW (DFT) reference shieldings stored as per-atom arrays. Your goal
 is to identify the correct structure using ShiftML3 predictions compared against a
-measured solid-state $^1$H spectrum.
+measured solid-state <sup>1</sup>H spectrum.
 
 
 ## 2. Reading material
@@ -65,7 +65,7 @@ works through the cocaine benchmark, identifying the correct polymorph from a po
 
 - **ShiftML3.** An ensemble of 8 PET models trained on GIPAW-level shieldings for
   ~14 000 molecular crystals from the Cambridge Structural Database. It delivers
-  DFT-level accuracy for $^1$H structure matching in seconds per candidate — versus
+  DFT-level accuracy for <sup>1</sup>H structure matching in seconds per candidate — versus
   hundreds of CPU-hours per GIPAW calculation.
 
 - **Shielding → shift calibration.** The model outputs shieldings $\sigma_i$; the
@@ -76,19 +76,19 @@ works through the cocaine benchmark, identifying the correct polymorph from a po
   shift information).
 
 - **Structure matching by RMSE.** Each candidate is scored against the experimental
-  $^1$H spectrum; the one with the lowest RMSE is taken as the best match. The method
-  works because $^1$H shieldings are highly sensitive to local environments — different
+  <sup>1</sup>H spectrum; the one with the lowest RMSE is taken as the best match. The method
+  works because <sup>1</sup>H shieldings are highly sensitive to local environments — different
   polymorphs produce detectably different spectra.
 
 - **Noise floor.** Even for the correct structure a finite irreducible RMSE is expected
   from DFT errors and the ML model's finite accuracy. Candidates whose RMSE falls
-  within this band (~$0.33 \pm 0.16$ ppm for PBE/GIPAW) are statistically
+  within this band ($0.33 \pm 0.16$ ppm for PBE/GIPAW) are statistically
   indistinguishable from experiment.
 
 
 👉 https://atomistic-cookbook.org/examples/shiftml-structure-match/shiftml-structure-match.html
 
-By the end you should have some ideas about these questions: *Why are $^1$H shieldings
+By the end you should have some ideas about these questions: *Why are <sup>1</sup>H shieldings
 sensitive enough to distinguish crystal polymorphs? What are the trade-offs between
 per-structure and global calibration? What is the noise floor, and what does it mean
 practically if two candidates both fall within it?*
@@ -377,7 +377,7 @@ A better approach is a **global calibration** — a single $(a, b)$ pair fitted 
 linear regression of computed shieldings against experimental shifts across many
 molecular crystals. This corrects systematic DFT functional errors (slope $a \neq -1$)
 and removes the per-structure degree of freedom. The values below were obtained by
-fitting PBE/GIPAW shieldings against experimental $^1$H shifts for a diverse benchmark
+fitting PBE/GIPAW shieldings against experimental <sup>1</sup>H shifts for a diverse benchmark
 set:
 
 $$a = -0.9024 \qquad b = 28.05 \text{ ppm}$$
@@ -424,10 +424,10 @@ the measured spectrum alone cannot rule them out.
 <details>
 <summary> What would it mean if more than one candidate was within the noise floor?</summary>
 
-In an ambiguous case, the $^1$H isotropic RMSE alone cannot resolve the degeneracy — the
+In an ambiguous case, the <sup>1</sup>H isotropic RMSE alone cannot resolve the degeneracy — the
 lollipop plot can confidently *exclude* high-RMSE candidates but cannot choose between
 those inside the band. In practice one could then: include shieldings from additional
-nuclei (e.g. $^{13}$C, $^{15}$N); incorporate the full chemical shielding tensor
+nuclei (e.g. <sup>13</sup>C, <sup>15</sup>N); incorporate the full chemical shielding tensor
 (anisotropy); or collect additional experimental data. The key figure of merit for
 structure determination is an unambiguous unique minimum, not merely a low absolute
 RMSE.
