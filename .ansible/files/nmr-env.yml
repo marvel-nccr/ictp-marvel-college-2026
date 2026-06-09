@@ -5,7 +5,7 @@ dependencies:
   - pip
   - pip:
     - ase >=3.23
-    - chemiscope >=1.0
+    - chemiscope ==1.0.3
     - matplotlib
     - numpy
     - scikit-learn >=1.4
