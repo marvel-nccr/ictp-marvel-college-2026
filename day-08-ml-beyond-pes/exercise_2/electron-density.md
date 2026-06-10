@@ -105,6 +105,7 @@ virtual machine (assuming you have run `update` before starting).
 The imports for the rest of the exercise:
 
 ```python
+import time
 import ase.io
 import chemiscope
 import matplotlib.pyplot as plt
