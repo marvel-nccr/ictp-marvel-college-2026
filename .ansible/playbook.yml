@@ -19,6 +19,19 @@
         ##############################################################
         EOM
 
+  - name: Install git-lfs
+    ansible.builtin.apt:
+      name: git-lfs
+      state: present
+      update_cache: true
+
+  - name: Initialise git-lfs filters for max
+    become_user: max
+    ansible.builtin.command:
+      cmd: git lfs install
+    register: lfs_install
+    changed_when: "'Updated Git hooks' in lfs_install.stdout or 'Git LFS initialized' in lfs_install.stdout"
+
   - name: Update `cdd` and `update` shell helpers
     ansible.builtin.blockinfile:
       path: "/home/max/.bashrc"
