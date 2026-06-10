@@ -1,0 +1,368 @@
+{
+   "temperature": [
+      1000.0
+   ],
+   "beta": [
+      11.604518121745585
+   ],
+   "composition": [
+      [
+         0,
+         125,
+         0,
+         125,
+         0,
+         0
+      ]
+   ],
+   "<E>": [
+      {
+         "mean": -0.16320827461424328,
+         "interval": [
+            -0.1639318708819378,
+            -0.16248467834654876
+         ]
+      }
+   ],
+   "<E E>-<E><E>": [
+      {
+         "mean": 1.3980415205974452e-05,
+         "interval": [
+            1.084147770828695e-05,
+            1.8719228509252026e-05
+         ]
+      }
+   ],
+   "SRO_Cr-Cr_(Orbit_2_0)": [
+      {
+         "mean": 0.0,
+         "interval": [
+            0.0,
+            0.0
+         ]
+      }
+   ],
+   "SRO_Cr-Mo_(Orbit_2_0)": [
+      {
+         "mean": 0.0,
+         "interval": [
+            0.0,
+            0.0
+         ]
+      }
+   ],
+   "SRO_Cr-Nb_(Orbit_2_0)": [
+      {
+         "mean": 0.0,
+         "interval": [
+            0.0,
+            0.0
+         ]
+      }
+   ],
+   "SRO_Cr-Ta_(Orbit_2_0)": [
+      {
+         "mean": 0.0,
+         "interval": [
+            0.0,
+            0.0
+         ]
+      }
+   ],
+   "SRO_Cr-V_(Orbit_2_0)": [
+      {
+         "mean": 0.0,
+         "interval": [
+            0.0,
+            0.0
+         ]
+      }
+   ],
+   "SRO_Cr-W_(Orbit_2_0)": [
+      {
+         "mean": 0.0,
+         "interval": [
+            0.0,
+            0.0
+         ]
+      }
+   ],
+   "SRO_Mo-Cr_(Orbit_2_0)": [
+      {
+         "mean": 0.0,
+         "interval": [
+            0.0,
+            0.0
+         ]
+      }
+   ],
+   "SRO_Mo-Mo_(Orbit_2_0)": [
+      {
+         "mean": 0.43325714018799005,
+         "interval": [
+            0.42140926833929715,
+            0.44510501203668296
+         ]
+      }
+   ],
+   "SRO_Mo-Nb_(Orbit_2_0)": [
+      {
+         "mean": 0.0,
+         "interval": [
+            0.0,
+            0.0
+         ]
+      }
+   ],
+   "SRO_Mo-Ta_(Orbit_2_0)": [
+      {
+         "mean": -0.43325714018799005,
+         "interval": [
+            -0.44510501203668296,
+            -0.42140926833929715
+         ]
+      }
+   ],
+   "SRO_Mo-V_(Orbit_2_0)": [
+      {
+         "mean": 0.0,
+         "interval": [
+            0.0,
+            0.0
+         ]
+      }
+   ],
+   "SRO_Mo-W_(Orbit_2_0)": [
+      {
+         "mean": 0.0,
+         "interval": [
+            0.0,
+            0.0
+         ]
+      }
+   ],
+   "SRO_Nb-Cr_(Orbit_2_0)": [
+      {
+         "mean": 0.0,
+         "interval": [
+            0.0,
+            0.0
+         ]
+      }
+   ],
+   "SRO_Nb-Mo_(Orbit_2_0)": [
+      {
+         "mean": 0.0,
+         "interval": [
+            0.0,
+            0.0
+         ]
+      }
+   ],
+   "SRO_Nb-Nb_(Orbit_2_0)": [
+      {
+         "mean": 0.0,
+         "interval": [
+            0.0,
+            0.0
+         ]
+      }
+   ],
+   "SRO_Nb-Ta_(Orbit_2_0)": [
+      {
+         "mean": 0.0,
+         "interval": [
+            0.0,
+            0.0
+         ]
+      }
+   ],
+   "SRO_Nb-V_(Orbit_2_0)": [
+      {
+         "mean": 0.0,
+         "interval": [
+            0.0,
+            0.0
+         ]
+      }
+   ],
+   "SRO_Nb-W_(Orbit_2_0)": [
+      {
+         "mean": 0.0,
+         "interval": [
+            0.0,
+            0.0
+         ]
+      }
+   ],
+   "SRO_Ta-Cr_(Orbit_2_0)": [
+      {
+         "mean": 0.0,
+         "interval": [
+            0.0,
+            0.0
+         ]
+      }
+   ],
+   "SRO_Ta-Mo_(Orbit_2_0)": [
+      {
+         "mean": -0.43325714018799005,
+         "interval": [
+            -0.44510501203668296,
+            -0.42140926833929715
+         ]
+      }
+   ],
+   "SRO_Ta-Nb_(Orbit_2_0)": [
+      {
+         "mean": 0.0,
+         "interval": [
+            0.0,
+            0.0
+         ]
+      }
+   ],
+   "SRO_Ta-Ta_(Orbit_2_0)": [
+      {
+         "mean": 0.43325714018799005,
+         "interval": [
+            0.42140926833929715,
+            0.44510501203668296
+         ]
+      }
+   ],
+   "SRO_Ta-V_(Orbit_2_0)": [
+      {
+         "mean": 0.0,
+         "interval": [
+            0.0,
+            0.0
+         ]
+      }
+   ],
+   "SRO_Ta-W_(Orbit_2_0)": [
+      {
+         "mean": 0.0,
+         "interval": [
+            0.0,
+            0.0
+         ]
+      }
+   ],
+   "SRO_V-Cr_(Orbit_2_0)": [
+      {
+         "mean": 0.0,
+         "interval": [
+            0.0,
+            0.0
+         ]
+      }
+   ],
+   "SRO_V-Mo_(Orbit_2_0)": [
+      {
+         "mean": 0.0,
+         "interval": [
+            0.0,
+            0.0
+         ]
+      }
+   ],
+   "SRO_V-Nb_(Orbit_2_0)": [
+      {
+         "mean": 0.0,
+         "interval": [
+            0.0,
+            0.0
+         ]
+      }
+   ],
+   "SRO_V-Ta_(Orbit_2_0)": [
+      {
+         "mean": 0.0,
+         "interval": [
+            0.0,
+            0.0
+         ]
+      }
+   ],
+   "SRO_V-V_(Orbit_2_0)": [
+      {
+         "mean": 0.0,
+         "interval": [
+            0.0,
+            0.0
+         ]
+      }
+   ],
+   "SRO_V-W_(Orbit_2_0)": [
+      {
+         "mean": 0.0,
+         "interval": [
+            0.0,
+            0.0
+         ]
+      }
+   ],
+   "SRO_W-Cr_(Orbit_2_0)": [
+      {
+         "mean": 0.0,
+         "interval": [
+            0.0,
+            0.0
+         ]
+      }
+   ],
+   "SRO_W-Mo_(Orbit_2_0)": [
+      {
+         "mean": 0.0,
+         "interval": [
+            0.0,
+            0.0
+         ]
+      }
+   ],
+   "SRO_W-Nb_(Orbit_2_0)": [
+      {
+         "mean": 0.0,
+         "interval": [
+            0.0,
+            0.0
+         ]
+      }
+   ],
+   "SRO_W-Ta_(Orbit_2_0)": [
+      {
+         "mean": 0.0,
+         "interval": [
+            0.0,
+            0.0
+         ]
+      }
+   ],
+   "SRO_W-V_(Orbit_2_0)": [
+      {
+         "mean": 0.0,
+         "interval": [
+            0.0,
+            0.0
+         ]
+      }
+   ],
+   "SRO_W-W_(Orbit_2_0)": [
+      {
+         "mean": 0.0,
+         "interval": [
+            0.0,
+            0.0
+         ]
+      }
+   ],
+   "metadata": [
+      {
+         "total_samples": 1091,
+         "equilibrium": 11,
+         "N_eff": 105,
+         "complete": true
+      }
+   ]
+}
