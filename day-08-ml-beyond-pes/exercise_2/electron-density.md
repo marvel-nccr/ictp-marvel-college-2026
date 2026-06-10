@@ -212,7 +212,7 @@ for atoms_i in frames:
 
     t0 = time.time()
     _, ns = run_scf(atoms_i, XC, BASIS, dm0=dm_sad_i)
-    print(f"   SAD initial guess → {n_sad} SCF cycles in {time.time() - t0} s")
+    print(f"   SAD initial guess → {ns} SCF cycles in {time.time() - t0} s")
 
 
     t0 = time.time()
@@ -221,9 +221,10 @@ for atoms_i in frames:
     )[TARGET_NAME]
     dm_ml_i = dm_from_ri_coefficients(atoms_i, ml_coeff_i, XC, BASIS, AUXBASIS)
     _, nm = run_scf(atoms_i, XC, BASIS, dm0=dm_ml_i)
-    print(f"   ML initial guess  → {n_ml} SCF cycles in {time.time() - t0} s")
+    print(f"   ML initial guess  → {nm} SCF cycles in {time.time() - t0} s")
 
-    n_sads.append(ns); n_mls.append(nm)
+    n_sads.append(ns)
+    n_mls.append(nm)
 ```
 
 and plot the results:
