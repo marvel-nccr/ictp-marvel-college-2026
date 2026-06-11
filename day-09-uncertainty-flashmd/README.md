@@ -9,7 +9,8 @@ This session has two independent parts, each in its own subfolder:
 - **`uncertainty/`** — quantifying the prediction error of a machine-learning
   interatomic potential (PET-MAD) and propagating it from single-point energies all
   the way to thermodynamic averages.
-- **`flashmd/`** — long-stride molecular dynamics with the universal **FlashMD** model.
+- **`nc-and-flashmd/`** — using non-conservative models and long-stride molecular
+  dynamics with the universal **FlashMD** model.
 
 
 ---
@@ -49,11 +50,37 @@ All using PET-MAD's built-in uncertainty quantification
 
 ---
 
-## Part 2 — Long-stride MD with FlashMD
+## Part 2 — Machine learning in molecular dynamics beyond potentials
 
-Folder: [`flashmd/`](flashmd/).
+Folder: [`nc-and-flashmd/`](nc-and-flashmd/).
 
-_Content to be added by the FlashMD tutors._
+To get started, open a terminal and run the following commands:
+
+```bash
+cd nc-and-flashmd/  # cd into the uncertainty folder
+workon metatomic  # activate the `metatomic` environment
+```
+
+This moves into this directory and activates the `metatomic` Python environment. Then
+launch JupyterLab from the same terminal:
+
+```bash
+jupyter lab
+```
+
+Open the notebook for the part you want to work on from the JupyterLab file browser and
+select the **Python (metatomic)** kernel.
+
+**Goal.** Learn how to run accelerated MD with machine-learning methods, first using
+the PET-MAD universal interatomic potential with non-conservative forces and multiple
+time stepping, then using the universal FlashMD model for molecular dynamics prediction
+using long strides.
+
+1. **Non-conservative forces** — Accelerate MD compared to MLIPs by leveraging faster
+   force predictions.
+2. **FlashMD** — Accelerate MD even further with models predicting simulations in long
+   strides
+3. **Interactive viewers** — Interact with MD systems in your browser and explore!
 
 ---
 
@@ -66,3 +93,6 @@ _Content to be added by the FlashMD tutors._
   propagation of shallow ensembles*, <https://arxiv.org/abs/2402.16621>
 - **Error propagation / calibration**: Imbalzano *et al.*, 2021 —
   <https://arxiv.org/abs/2011.08828>
+- **Correct use of non-conservative forces in simulations**: Bigi *et al.*, 2024 —
+  <https://proceedings.mlr.press/v267/bigi25a.html>
+- **FlashMD**: Bigi *et al.*, 2025 — <https://papers.nips.cc/paper_files/paper/2025/hash/7ffade093764c9a59a777c3cbe346b97-Abstract-Conference.html>
