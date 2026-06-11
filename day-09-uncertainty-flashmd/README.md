@@ -79,7 +79,7 @@ using long strides.
 1. **Non-conservative forces** — Accelerate MD compared to MLIPs by leveraging faster
    force predictions.
 2. **FlashMD** — Accelerate MD even further with models predicting simulations in long
-   strides
+   strides.
 3. **Interactive viewers** — Interact with MD systems in your browser and explore!
 
 ---
