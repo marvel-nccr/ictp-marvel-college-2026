@@ -1,0 +1,14 @@
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  - pip:
+    - ase >=3.23
+    - chemiscope ==1.0.3
+    - matplotlib
+    - numpy
+    - scikit-learn >=1.4
+    - shiftml ==0.1.1
+    - tqdm
+    - ipykernel
